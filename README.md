@@ -1,7 +1,4 @@
-Here’s a **clean, polished README** for your `YOLOV8-PyTorch` repo based on your draft, but better organized, concise, and GitHub-friendly.
-
 ---
-
 # YOLOV8-PyTorch
 
 ![YOLO-V8](https://github.com/Gaurav14cs17/YOLOV8-Pytorch/blob/main/images/v8_structure.jpg)
