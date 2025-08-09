@@ -1,46 +1,54 @@
 import torch
 import torch.nn as nn
 
+# Conv+BN fusion function
+def fuse_conv(conv, norm):
+    fused_conv = nn.Conv2d(
+        conv.in_channels,
+        conv.out_channels,
+        kernel_size=conv.kernel_size,
+        stride=conv.stride,
+        padding=conv.padding,
+        groups=conv.groups,
+        bias=True
+    ).requires_grad_(False).to(conv.weight.device)
+
+    w_conv = conv.weight.clone().view(conv.out_channels, -1)
+    w_norm = torch.diag(norm.weight.div(torch.sqrt(norm.running_var + norm.eps)))
+    fused_conv.weight.copy_(torch.mm(w_norm, w_conv).view(fused_conv.weight.size()))
+
+    b_conv = torch.zeros(conv.weight.size(0), device=conv.weight.device) if conv.bias is None else conv.bias
+    b_norm = norm.bias - norm.weight.mul(norm.running_mean).div(torch.sqrt(norm.running_var + norm.eps))
+    fused_conv.bias.copy_(torch.mm(w_norm, b_conv.reshape(-1, 1)).reshape(-1) + b_norm)
+    return fused_conv
+
+
 class Conv(nn.Module):
-    def __init__(self, in_ch, out_ch, k, s=1, p=None):
+    """Standard Conv + BN + Activation"""
+    def __init__(self, c1, c2, k=1, s=1, p=None, act=True):
         super().__init__()
-        self.conv = nn.Conv2d(in_ch, out_ch, k, s, p if p is not None else k // 2, bias=False)
-        self.bn = nn.BatchNorm2d(out_ch)
-        self.act = nn.SiLU()
+        self.conv = nn.Conv2d(c1, c2, k, s, p if p is not None else k // 2, bias=False)
+        self.bn = nn.BatchNorm2d(c2)
+        self.act = nn.SiLU() if act else nn.Identity()
 
     def forward(self, x):
         return self.act(self.bn(self.conv(x)))
 
-class ResidualBlock(nn.Module):
-    def __init__(self, ch):
+    def fuse(self):
+        self.conv = fuse_conv(self.conv, self.bn)
+        self.bn = nn.Identity()
+        return self
+
+
+class FuseBlock(nn.Module):
+    """Feature map fusion block (adds and convs two feature maps)"""
+    def __init__(self, c1, c2):
         super().__init__()
-        self.conv1 = Conv(ch, ch, 1)
-        self.conv2 = Conv(ch, ch, 3)
+        self.conv = Conv(c1, c2, k=1)
 
-    def forward(self, x):
-        return x + self.conv2(self.conv1(x))
+    def forward(self, x1, x2):
+        return self.conv(x1 + x2)
 
-class CSP(nn.Module):
-    def __init__(self, in_ch, out_ch, n_blocks):
-        super().__init__()
-        self.split_conv = Conv(in_ch, out_ch // 2, 1)
-        self.residual_blocks = nn.Sequential(*[ResidualBlock(out_ch // 2) for _ in range(n_blocks)])
-        self.final_conv = Conv(out_ch, out_ch, 1)
-
-    def forward(self, x):
-        y1 = self.residual_blocks(self.split_conv(x))
-        y2 = self.split_conv(x)
-        return self.final_conv(torch.cat((y1, y2), dim=1))
-
-class SPP(nn.Module):
-    def __init__(self, in_ch, out_ch):
-        super().__init__()
-        self.m = nn.ModuleList([
-            nn.MaxPool2d(kernel_size=5, stride=1, padding=2),
-            nn.MaxPool2d(kernel_size=9, stride=1, padding=4),
-            nn.MaxPool2d(kernel_size=13, stride=1, padding=6)
-        ])
-        self.conv = Conv(in_ch * 4, out_ch, 1)
-
-    def forward(self, x):
-        return self.conv(torch.cat([x] + [m(x) for m in self.m], dim=1))
+    def fuse(self):
+        self.conv.fuse()
+        return self
