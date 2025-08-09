@@ -1,33 +1,25 @@
+# neck.py
 import torch
-import torch.nn as nn
-from .blocks import Conv, CSP
+from blocks import ConvBlock, CSPBlock
 
-class DarkFPN(nn.Module):
+class Neck(torch.nn.Module):
     def __init__(self, width, depth):
         super().__init__()
-        self.reduce_conv1 = Conv(width[5], width[4], 1)
-        self.csp1 = CSP(width[4] * 2, width[4], depth[0])
+        self.upsample = torch.nn.Upsample(scale_factor=2, mode="nearest")
 
-        self.reduce_conv2 = Conv(width[4], width[3], 1)
-        self.csp2 = CSP(width[3] * 2, width[3], depth[0])
+        self.top_to_mid = CSPBlock(width[4] + width[5], width[4], depth[0], add=False)
+        self.mid_to_small = CSPBlock(width[3] + width[4], width[3], depth[0], add=False)
 
-        self.down_conv1 = Conv(width[3], width[3], 3, 2)
-        self.csp3 = CSP(width[3] * 2, width[4], depth[0])
+        self.downsample_mid = ConvBlock(width[3], width[3], 3, 2)
+        self.mid_fuse = CSPBlock(width[3] + width[4], width[4], depth[0], add=False)
 
-        self.down_conv2 = Conv(width[4], width[4], 3, 2)
-        self.csp4 = CSP(width[4] * 2, width[5], depth[0])
+        self.downsample_top = ConvBlock(width[4], width[4], 3, 2)
+        self.top_fuse = CSPBlock(width[4] + width[5], width[5], depth[0], add=False)
 
-    def forward(self, s3, s4, s5):
-        p5_up = nn.functional.interpolate(self.reduce_conv1(s5), scale_factor=2)
-        p4 = self.csp1(torch.cat([p5_up, s4], dim=1))
-
-        p4_up = nn.functional.interpolate(self.reduce_conv2(p4), scale_factor=2)
-        p3 = self.csp2(torch.cat([p4_up, s3], dim=1))
-
-        p3_down = self.down_conv1(p3)
-        p4_out = self.csp3(torch.cat([p3_down, p4], dim=1))
-
-        p4_down = self.down_conv2(p4_out)
-        p5_out = self.csp4(torch.cat([p4_down, s5], dim=1))
-
-        return p3, p4_out, p5_out
+    def forward(self, feats):
+        feat_small, feat_mid, feat_large = feats
+        merged_mid = self.top_to_mid(torch.cat([self.upsample(feat_large), feat_mid], dim=1))
+        merged_small = self.mid_to_small(torch.cat([self.upsample(merged_mid), feat_small], dim=1))
+        mid_down = self.mid_fuse(torch.cat([self.downsample_mid(merged_small), merged_mid], dim=1))
+        top_down = self.top_fuse(torch.cat([self.downsample_top(mid_down), feat_large], dim=1))
+        return merged_small, mid_down, top_down
