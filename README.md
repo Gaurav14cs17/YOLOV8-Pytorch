@@ -12,7 +12,7 @@
 
 ---
 
-## 📄 **README.md**
+
 
 ```markdown
 # YOLO Object Detection Pipeline (Custom Modular Design)
