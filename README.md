@@ -1,58 +1,46 @@
-# YOLOV8-Pytorch
-
-![YOLO-V8](https://github.com/Gaurav14cs17/YOLOV8-Pytorch/blob/main/images/v8_structure.jpg)
-
-
-* Project description
-* Directory structure (backbone, neck, head, yolo, blocks, dataset, augmentations)
-* Installation instructions
-* Usage example for training/inference
-* Details on dataset handling & augmentations
-* FuseConv2d + model fusion usage
+Here’s a **clean, polished README** for your `YOLOV8-PyTorch` repo based on your draft, but better organized, concise, and GitHub-friendly.
 
 ---
 
+# YOLOV8-PyTorch
 
+![YOLO-V8](https://github.com/Gaurav14cs17/YOLOV8-Pytorch/blob/main/images/v8_structure.jpg)
 
-```markdown
-# YOLO Object Detection Pipeline (Custom Modular Design)
+A modular, PyTorch-based implementation of YOLO-style object detection with:
 
-This repository contains a modular implementation of YOLO-style object detection with:
-- **Backbone** (Darknet-style)
-- **Neck** (FPN/PANet fusion)
-- **Detection Head**
-- **Custom Dataset Loader** for YOLO format
-- **Albumentations-based Augmentations**
-- **BatchNorm fusion** for inference optimization
-
-The structure is **clean and modular** so you can easily extend, modify, or replace components.
+* **Backbone** (Darknet-style)
+* **Neck** (FPN / PANet fusion)
+* **Detection Head**
+* **Custom YOLO Dataset Loader**
+* **Albumentations-based Augmentations**
+* **Conv + BatchNorm Fusion** for faster inference
 
 ---
 
 ## 📂 Directory Structure
-```
 
+```
 model/
 │── backbone.py       # DarkNet backbone
-│── neck.py           # DarkFPN / PANet neck
+│── neck.py           # FPN / PANet neck
 │── head.py           # Detection head
-│── yolo.py           # Main YOLO model
-│── blocks.py         # Common CNN building blocks (Conv, Bottleneck, CSP, etc.)
+│── yolo.py           # YOLO model (connect backbone + neck + head)
+│── blocks.py         # Common CNN blocks (Conv, Bottleneck, CSP, etc.)
 dataset/
-│── dataset\_yolo.py   # YOLO format dataset loader
-│── augmentations.py  # Albumentations wrapper for image + bbox augmentation
+│── dataset_yolo.py   # YOLO dataset loader
+│── augmentations.py  # Albumentations wrapper for image + bbox aug
 utils/
-│── fuse.py           # Conv+BN fusion function
+│── fuse.py           # Conv + BN fusion
 train.py              # Training script
 infer.py              # Inference script
 requirements.txt
 README.md
-
-````
+```
 
 ---
 
 ## 📦 Installation
+
 ```bash
 # Clone this repository
 git clone https://github.com/Gaurav14cs17/YOLOV8-Pytorch.git
@@ -60,61 +48,58 @@ cd YOLOV8-Pytorch
 
 # Install dependencies
 pip install -r requirements.txt
-````
+```
 
 ---
 
-## 📊 Dataset Format
+## 📊 Dataset Format (YOLO)
 
-We use **YOLO format**:
+Directory structure:
 
 ```
-images/
-    train/
-    val/
-labels/
-    train/
-    val/
+dataset/
+    images/
+        train/
+        val/
+    labels/
+        train/
+        val/
 ```
 
-Each label file contains:
+Label format:
 
 ```
 class x_center y_center width height
 ```
 
-Values are **normalized** (0–1 range).
+All values are **normalized** (0–1 range).
 
 ---
 
 ## 🎨 Augmentations
 
-We use **Albumentations** for powerful augmentations:
+We use [Albumentations](https://albumentations.ai/) for data augmentation.
+Default augmentations include:
 
 * Blur / Median Blur
 * CLAHE (Contrast Limited Adaptive Histogram Equalization)
 * Grayscale
 * Random Brightness / Contrast
-* Hue, Saturation, Value shifts
+* Hue / Saturation / Value shifts
 * Shift / Scale / Rotate
 
-You can customize them in:
-
-```
-dataset/augmentations.py
-```
-
-Example:
+**Example**:
 
 ```python
 from dataset.augmentations import AlbumentationsWrapper
+
 augmenter = AlbumentationsWrapper()
 image, labels = augmenter(image, labels)
 ```
 
 ---
 
-## 🖼 YOLO Dataset Loader
+## 🖼 Dataset Loader
 
 ```python
 from dataset.dataset_yolo import DatasetYOLO
@@ -129,19 +114,20 @@ dataset = DatasetYOLO(
 
 ---
 
-## 🚀 Model Example
+## 🚀 Model Usage
 
 ```python
 from model.yolo import YOLO
 from utils.fuse import fuse_conv_and_bn
 
+# Create model
 model = YOLO(num_classes=80)
 
-# Fuse Conv+BN for faster inference
+# Fuse Conv + BN for faster inference
 model = fuse_conv_and_bn(model)
 
-# Forward
-output = model(images)  # shape: [batch, anchors, grid_h, grid_w, classes+5]
+# Forward pass
+output = model(images)  # [batch, anchors, grid_h, grid_w, classes+5]
 ```
 
 ---
@@ -164,7 +150,7 @@ python infer.py --weights best.pt --source images/
 
 ## ⚡ Fuse Conv + BN
 
-We include a utility to **fuse Conv2d + BatchNorm2d** for faster inference:
+BatchNorm can be merged into Conv2d for faster inference:
 
 ```python
 from utils.fuse import fuse_conv_and_bn
@@ -174,11 +160,10 @@ model = fuse_conv_and_bn(model)
 ---
 
 ## 📌 TODO
+
 * [ ] Mixed Precision Training
 * [ ] Multi-scale Training
 * [ ] Mosaic Augmentation
-* [ ] Export to ONNX/TensorRT
+* [ ] ONNX / TensorRT Export
 
 ---
-
-
