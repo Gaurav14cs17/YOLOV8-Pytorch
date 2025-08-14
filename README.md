@@ -14,6 +14,7 @@ A modular, PyTorch-based implementation of YOLO-style object detection with:
 * **Conv + BatchNorm Fusion** for faster inference
 
 ---
+![Results](https://github.com/Gaurav14cs17/YOLOV8-Pytorch/blob/main/images/image_2.jpg)
 
 ## 📂 Directory Structure
 
