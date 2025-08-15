@@ -1,10 +1,7 @@
 import math
 import torch
 from utils.util import make_anchors
-from yolo import *
-
-
-
+from model.yolo import *
 
 
 # Model factory functions (variants)

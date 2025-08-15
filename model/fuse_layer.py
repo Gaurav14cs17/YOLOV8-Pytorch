@@ -1,6 +1,5 @@
-# fuse_layer.py
 import torch
-from blocks import ConvBlock
+from model.blocks import ConvBlock
 
 def fuse_conv_bn(conv, bn):
     """Fuse Conv2d and BatchNorm2d into one Conv2d"""

@@ -1,4 +1,3 @@
-# blocks.py
 import torch
 
 def pad(k, p=None, d=1):

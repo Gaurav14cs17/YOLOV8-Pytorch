@@ -1,6 +1,5 @@
-# neck.py
 import torch
-from blocks import ConvBlock, CSPBlock
+from model.blocks import ConvBlock, CSPBlock
 
 class Neck(torch.nn.Module):
     def __init__(self, width, depth):

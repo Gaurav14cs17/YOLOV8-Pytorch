@@ -1,9 +1,8 @@
-# yolo.py
 import torch
-from backbone import Backbone
-from neck import Neck
-from head import Head
-from fuse_layer import FuseLayer
+from model.backbone import Backbone
+from model.neck import Neck
+from model.head import Head
+from model.fuse_layer import FuseLayer
 
 class YOLO(torch.nn.Module):
     def __init__(self, width, depth, num_classes):
@@ -11,6 +10,15 @@ class YOLO(torch.nn.Module):
         self.backbone = Backbone(width, depth)
         self.neck = Neck(width, depth)
         self.head = Head(num_classes, (width[3], width[4], width[5]))
+        
+        # Add these lines
+        self.nc = num_classes
+
+        self.no = num_classes + self.head.dfl_channels * 4
+        # self.no = self.head.no
+        self.no = self.head.outputs_per_anchor
+
+
 
         img_dummy = torch.zeros(1, 3, 256, 256)
         with torch.no_grad():
@@ -19,6 +27,7 @@ class YOLO(torch.nn.Module):
         self.head.stride = torch.tensor([256 / f.shape[-2] for f in feats])
         self.stride = self.head.stride
         self.head.initialize_biases()
+
 
     def forward(self, x):
         feats = self.backbone(x)

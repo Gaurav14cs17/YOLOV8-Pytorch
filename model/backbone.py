@@ -1,6 +1,5 @@
-# backbone.py
 import torch
-from blocks import ConvBlock, CSPBlock, SPPBlock
+from model.blocks import ConvBlock, CSPBlock, SPPBlock
 
 class Backbone(torch.nn.Module):
     def __init__(self, width, depth):

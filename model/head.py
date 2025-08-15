@@ -1,7 +1,7 @@
-# head.py
 import math
 import torch
-from utils.util import make_anchors  # Assuming you have this utility
+from model.blocks import ConvBlock
+from utils import util
 
 class DFL(torch.nn.Module):
     def __init__(self, ch=16):
@@ -16,7 +16,6 @@ class DFL(torch.nn.Module):
         x = x.view(b, 4, self.ch, a).transpose(2, 1)
         return self.conv(x.softmax(1)).view(b, 4, a)
 
-
 class Head(torch.nn.Module):
     anchors = torch.empty(0)
     strides = torch.empty(0)
@@ -25,8 +24,13 @@ class Head(torch.nn.Module):
         super().__init__()
         self.dfl_channels = 16
         self.num_classes = num_classes
-        self.num_layers = len(filters)
+        
+        # Add YOLOv8-style attribute names
+        self.nc = num_classes
         self.outputs_per_anchor = num_classes + self.dfl_channels * 4
+        self.no = self.outputs_per_anchor  # matches YOLOv8 expected API
+        
+        self.num_layers = len(filters)
         self.stride = torch.zeros(self.num_layers)
 
         c1 = max(filters[0], self.num_classes)
@@ -50,25 +54,24 @@ class Head(torch.nn.Module):
             ) for f in filters
         ])
 
+
     def forward(self, feats):
         for i in range(self.num_layers):
             feats[i] = torch.cat((self.bbox_branch[i](feats[i]), self.cls_branch[i](feats[i])), dim=1)
-
         if self.training:
             return feats
 
-        self.anchors, self.strides = [t.transpose(0, 1) for t in make_anchors(feats, self.stride, 0.5)]
+        # self.anchors, self.strides = [t.transpose(0, 1) for t in make_anchors(feats, self.stride, 0.5)]
+        self.anchors, self.strides = [t.transpose(0, 1) for t in Head.make_anchors(feats, self.stride, 0.5)]
 
         batch = feats[0].shape[0]
         concat = torch.cat([f.view(batch, self.outputs_per_anchor, -1) for f in feats], dim=2)
 
         box_preds, class_preds = concat.split((self.dfl_channels * 4, self.num_classes), dim=1)
         lt, rb = torch.split(self.dfl(box_preds), 2, dim=1)
-
         lt = self.anchors.unsqueeze(0) - lt
         rb = self.anchors.unsqueeze(0) + rb
         boxes = torch.cat(((lt + rb) / 2, rb - lt), dim=1)
-
         return torch.cat((boxes * self.strides, class_preds.sigmoid()), dim=1)
 
     def initialize_biases(self):
