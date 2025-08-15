@@ -1,3 +1,5 @@
+#util.py
+
 import copy
 import math
 import random
@@ -44,22 +46,14 @@ def setup_multi_processes():
         environ['MKL_NUM_THREADS'] = '1'
 
 
-def scale(coords, shape1, shape2, ratio_pad=None):
-    if ratio_pad is None:  # calculate from img0_shape
-        gain = min(shape1[0] / shape2[0], shape1[1] / shape2[1])  # gain  = old / new
-        pad = (shape1[1] - shape2[1] * gain) / 2, (shape1[0] - shape2[0] * gain) / 2  # wh padding
-    else:
-        gain = ratio_pad[0][0]
-        pad = ratio_pad[1]
-
+def scale(coords, shape1, gain, pad):
     coords[:, [0, 2]] -= pad[0]  # x padding
     coords[:, [1, 3]] -= pad[1]  # y padding
-    coords[:, :4] /= gain
-
-    coords[:, 0].clamp_(0, shape2[1])  # x1
-    coords[:, 1].clamp_(0, shape2[0])  # y1
-    coords[:, 2].clamp_(0, shape2[1])  # x2
-    coords[:, 3].clamp_(0, shape2[0])  # y2
+    coords[:, :4] /= gain[0]  # gain_x == gain_y for letterbox
+    coords[:, 0].clamp_(0, shape1[1])  # x1
+    coords[:, 1].clamp_(0, shape1[0])  # y1
+    coords[:, 2].clamp_(0, shape1[1])  # x2
+    coords[:, 3].clamp_(0, shape1[0])  # y2
     return coords
 
 
