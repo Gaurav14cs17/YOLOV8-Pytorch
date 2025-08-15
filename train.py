@@ -1,3 +1,5 @@
+#train.py
+
 import argparse
 import copy
 import csv
@@ -7,14 +9,33 @@ import warnings
 import numpy as np
 import torch
 import tqdm
-import yaml
-from torch.utils import data
-
 from utils import util
-from model.model import*
-from dataset.dataset import Dataset
+import yaml
+import torch.nn as nn
+from model.model import yolo_v8_n
+import dataloader
+from pathlib import Path
+
+
+import os
+from glob import glob
+from torch.utils.data import DataLoader
+
+from model import *
+from dataloader.dataloader import Dataset
 
 warnings.filterwarnings("ignore")
+
+
+FORMATS = ('bmp','dng','jpeg','jpg','mpo','png','tif','tiff','webp')
+
+def _list_images(root):
+    root = Path(root)
+    out = []
+    for ext in FORMATS:
+        out += [str(p) for p in root.rglob(f'*.{ext}')]
+        out += [str(p) for p in root.rglob(f'*.{ext.upper()}')]
+    return out
 
 
 class YoloTrainer:
@@ -23,12 +44,16 @@ class YoloTrainer:
         self.params = params
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        self.model = nn.yolo_v8_n(len(params['names'].values())).to(self.device)
+        self.model = yolo_v8_n(len(params['names'].values())).to(self.device)
+
         self.accumulate = max(round(64 / (args.batch_size * args.world_size)), 1)
         self.params['weight_decay'] *= args.batch_size * args.world_size * self.accumulate / 64
 
         self.optimizer = self._setup_optimizer()
-        self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, self._get_lr_lambda(), last_epoch=-1)
+        self.scheduler = torch.optim.lr_scheduler.LambdaLR(
+            self.optimizer, 
+            lr_lambda=self._get_lr_lambda()
+        )
         self.ema = util.EMA(self.model) if args.local_rank == 0 else None
         self.criterion = util.ComputeLoss(self.model, self.params)
         self.scaler = torch.cuda.amp.GradScaler()
@@ -39,6 +64,7 @@ class YoloTrainer:
             os.makedirs('weights', exist_ok=True)
 
     def _get_lr_lambda(self):
+        """Returns the learning rate lambda function"""
         def lr_lambda(epoch):
             return (1 - epoch / self.args.epochs) * (1.0 - self.params['lrf']) + self.params['lrf']
         return lr_lambda
@@ -60,28 +86,48 @@ class YoloTrainer:
         return optimizer
 
     def _load_dataset(self, train=True):
-        txt_file = '../Dataset/COCO/train2017.txt' if train else '../Dataset/COCO/val2017.txt'
-        img_dir = '../Dataset/COCO/images/train2017/' if train else '../Dataset/COCO/images/val2017/'
+        # Prefer reading from config.yml:
+        # Expect keys like params['data']['train'] and params['data']['val'], or similar.
+        data_cfg = self.params.get('data', {})
+        img_dir = data_cfg.get('train' if train else 'val', None)
 
-        filenames = []
-        with open(txt_file) as f:
-            for line in f:
-                filename = line.strip().split('/')[-1]
-                filenames.append(os.path.join(img_dir, filename))
+        # Fallback: try YOLO-style default relative layout if config doesn't provide paths
+        if img_dir is None:
+            base = Path('dataset') / 'images'
+            img_dir = str(base / ('train' if train else 'val'))
 
-        dataset = Dataset(filenames, self.args.input_size, self.params, augment=train)
-        return dataset
+        label_root = Path(img_dir.replace(f'{os.sep}images{os.sep}', f'{os.sep}labels{os.sep}'))
 
+        # Collect images
+        image_paths_all = _list_images(img_dir)
+        image_paths = []
+        for img_path in image_paths_all:
+            stem = Path(img_path).stem
+            label_path = label_root / f'{stem}.txt'
+            if label_path.exists():
+                image_paths.append(img_path)
+
+        if len(image_paths) == 0:
+            raise ValueError(
+                f'No images found.\n'
+                f'  Searched: {img_dir}\n'
+                f'  Did you set correct paths in config.yml under data.train / data.val?\n'
+                f'  Also ensure labels live under ".../labels/<split>/*.txt" and names match images.'
+            )
+
+        print(f"Loaded {len(image_paths)} {'training' if train else 'validation'} samples")
+        return Dataset(image_paths, self.args.input_size, self.params, augment=train)
+    
     def train(self):
         dataset = self._load_dataset(train=True)
 
         sampler = None if self.args.world_size <= 1 else data.distributed.DistributedSampler(dataset)
-        loader = data.DataLoader(
+        loader = DataLoader(
             dataset,
             batch_size=self.args.batch_size,
             shuffle=(sampler is None),
             sampler=sampler,
-            num_workers=8,
+            num_workers=1,
             pin_memory=True,
             collate_fn=Dataset.collate_fn
         )
@@ -105,7 +151,6 @@ class YoloTrainer:
             for epoch in range(self.args.epochs):
                 self.model.train()
 
-                # Disable mosaic augmentation last 10 epochs
                 if self.args.epochs - epoch <= 10:
                     loader.dataset.mosaic = False
 
@@ -124,23 +169,31 @@ class YoloTrainer:
 
                     # Warmup
                     if iteration <= num_warmup_iters:
-                        warmup_ratio = np.interp(iteration, [0, num_warmup_iters], [1, 64 / (self.args.batch_size * self.args.world_size)])
+                        warmup_ratio = np.interp(iteration, [0, num_warmup_iters], 
+                                               [1, 64 / (self.args.batch_size * self.args.world_size)])
                         self.accumulate = max(1, round(warmup_ratio))
+                        
                         for j, group in enumerate(self.optimizer.param_groups):
-                            if j == 0:
-                                group_lr = np.interp(iteration, [0, num_warmup_iters], [self.params['warmup_bias_lr'], group['initial_lr'] * self.scheduler.lr_lambda(epoch)])
-                            else:
-                                group_lr = np.interp(iteration, [0, num_warmup_iters], [0.0, group['initial_lr'] * self.scheduler.lr_lambda(epoch)])
+                            if j == 0:  # biases
+                                group_lr = np.interp(iteration, [0, num_warmup_iters],
+                                                   [self.params['warmup_bias_lr'],
+                                                   group['initial_lr'] * self._get_lr_lambda()(epoch)])
+                            else:  # weights
+                                group_lr = np.interp(iteration, [0, num_warmup_iters],
+                                                   [0.0,
+                                                   group['initial_lr'] * self._get_lr_lambda()(epoch)])
+                            
                             group['lr'] = group_lr
                             if 'momentum' in group:
-                                group['momentum'] = np.interp(iteration, [0, num_warmup_iters], [self.params['warmup_momentum'], self.params['momentum']])
+                                group['momentum'] = np.interp(iteration, [0, num_warmup_iters],
+                                                            [self.params['warmup_momentum'], 
+                                                            self.params['momentum']])
 
                     with torch.cuda.amp.autocast():
                         outputs = self.model(images)
                         loss = self.criterion(outputs, targets)
 
                     running_loss.update(loss.item(), images.size(0))
-
                     loss = loss * self.args.batch_size * self.args.world_size
 
                     self.scaler.scale(loss).backward()
@@ -183,11 +236,11 @@ class YoloTrainer:
     @torch.no_grad()
     def test(self, model=None):
         dataset = self._load_dataset(train=False)
-        loader = data.DataLoader(
+        loader = DataLoader(
             dataset,
-            batch_size=8,
+            batch_size=4,
             shuffle=False,
-            num_workers=8,
+            num_workers=1,
             pin_memory=True,
             collate_fn=Dataset.collate_fn
         )
@@ -271,9 +324,9 @@ class YoloTrainer:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--input-size', type=int, default=640)
-    parser.add_argument('--batch-size', type=int, default=32)
+    parser.add_argument('--batch-size', type=int, default=4)
     parser.add_argument('--local_rank', type=int, default=0)
-    parser.add_argument('--epochs', type=int, default=500)
+    parser.add_argument('--epochs', type=int, default=51000)
     parser.add_argument('--train', action='store_true')
     parser.add_argument('--test', action='store_true')
 
@@ -292,7 +345,11 @@ def main():
     util.setup_seed()
     util.setup_multi_processes()
 
-    with open(os.path.join('utils', 'args.yaml'), errors='ignore') as f:
+    # with open('config.yml', errors='ignore') as f:
+    #     params = yaml.safe_load(f)
+
+
+    with open(os.path.join('config', 'config.yml'), errors='ignore') as f:
         params = yaml.safe_load(f)
 
     trainer = YoloTrainer(args, params)
