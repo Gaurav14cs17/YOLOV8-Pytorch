@@ -2,7 +2,7 @@
 ---
 # YOLOV8-PyTorch
 
-![YOLO-V8](https://github.com/Gaurav14cs17/YOLOV8-Pytorch/blob/main/images/v8_structure.jpg)
+![YOLO-V8](https://github.com/Gaurav14cs17/YOLOV8-Pytorch/blob/main/images/v8_structure.png)
 
 A modular, PyTorch-based implementation of YOLO-style object detection with:
 
