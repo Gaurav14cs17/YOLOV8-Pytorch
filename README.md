@@ -3,11 +3,12 @@
 Welcome to this PyTorch implementation of YOLOv8 with RepNeXt.
 
 This project focuses on building a fast and accurate object detection model that’s also easy to train and deploy. It’s based on the RepNeXt paper, which uses a smart idea: during training, the model learns with multiple convolution branches, but at inference time, everything is fused into a single efficient layer.
-What does that mean for you?
 
-Better feature learning while training
+#### What does that mean for you?
 
-Faster and lighter inference when deploying
+#### Better feature learning while training
+
+#### Faster and lighter inference when deploying
 
 This project is inspired by the [RepNeXt paper](https://arxiv.org/abs/2406.16004) — a clever approach that uses multiple convolutional branches during training but fuses them into a single efficient layer at inference time. The result? You get the best of both worlds: rich feature learning during training and blazing-fast inference.
 
