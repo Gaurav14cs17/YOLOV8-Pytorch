@@ -53,8 +53,8 @@ We use Cross Stage Partial (CSP) blocks with RepNeXt for better gradient flow an
 Clone the repo and install dependencies:
 
 ```bash
-git clone https://github.com/Gaurav14cs17/YOLOV8-Pytorch.git
-cd YOLOV8-Pytorch
+git clone https://github.com/Gaurav14cs17/YOLOv8-RepNeXt.git
+cd YOLOv8-RepNeXt
 pip install -r requirements.txt
 ```
 
