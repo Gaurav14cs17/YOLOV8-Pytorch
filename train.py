@@ -9,10 +9,14 @@ import warnings
 import numpy as np
 import torch
 import tqdm
-from utils import util
+from utils import (
+    setup_seed, setup_multi_processes, clip_gradients, strip_optimizer,
+    EMA, AverageMeter, ComputeLoss, compute_ap, scale, box_iou,
+    non_max_suppression
+)
 import yaml
 import torch.nn as nn
-from model.model import yolo_v8_n
+from model.yolo import yolo_v8_n
 import dataloader
 from pathlib import Path
 
@@ -22,7 +26,7 @@ from glob import glob
 from torch.utils.data import DataLoader
 
 from model import *
-from dataloader.dataloader import Dataset
+from dataloader import Dataset
 
 warnings.filterwarnings("ignore")
 
@@ -54,8 +58,8 @@ class YoloTrainer:
             self.optimizer, 
             lr_lambda=self._get_lr_lambda()
         )
-        self.ema = util.EMA(self.model) if args.local_rank == 0 else None
-        self.criterion = util.ComputeLoss(self.model, self.params)
+        self.ema = EMA(self.model) if args.local_rank == 0 else None
+        self.criterion = ComputeLoss(self.model, self.params)
         self.scaler = torch.cuda.amp.GradScaler()
 
         self.best_map = 0.0
@@ -145,7 +149,7 @@ class YoloTrainer:
 
         with open('weights/step.csv', 'w', newline='') as f_csv:
             if self.args.local_rank == 0:
-                writer = csv.DictWriter(f_csv, fieldnames=['epoch', 'mAP@50', 'mAP'])
+                writer = csv.DictWriter(f_csv, fieldnames=['epoch', 'Precision', 'Recall', 'mAP@50', 'mAP@50-95'])
                 writer.writeheader()
 
             for epoch in range(self.args.epochs):
@@ -159,7 +163,7 @@ class YoloTrainer:
 
                 progress_bar = tqdm.tqdm(enumerate(loader), total=num_batches) if self.args.local_rank == 0 else enumerate(loader)
 
-                running_loss = util.AverageMeter()
+                running_loss = AverageMeter()
                 self.optimizer.zero_grad()
 
                 for i, (images, targets, _) in progress_bar:
@@ -200,7 +204,7 @@ class YoloTrainer:
 
                     if iteration % self.accumulate == 0:
                         self.scaler.unscale_(self.optimizer)
-                        util.clip_gradients(self.model)
+                        clip_gradients(self.model)
                         self.scaler.step(self.optimizer)
                         self.scaler.update()
                         self.optimizer.zero_grad()
@@ -214,22 +218,43 @@ class YoloTrainer:
                 self.scheduler.step()
 
                 if self.args.local_rank == 0:
-                    map50, mean_ap = self.test(model=self.ema.ema if self.ema else self.model)
-                    writer.writerow({'epoch': str(epoch + 1).zfill(3), 'mAP@50': f'{map50:.3f}', 'mAP': f'{mean_ap:.3f}'})
+                    precision, recall, map50, mean_ap = self.test(model=self.ema.ema if self.ema else self.model)
+                    
+                    # Display metrics table
+                    print(f'\n{"="*60}')
+                    print(f'  Epoch {epoch+1}/{self.args.epochs} | Loss: {running_loss.avg:.4f}')
+                    print(f'  {"─"*56}')
+                    print(f'  Precision: {precision:.4f} | Recall: {recall:.4f}')
+                    print(f'  mAP@50: {map50:.4f} | mAP@50-95: {mean_ap:.4f}')
+                    print(f'{"="*60}\n')
+                    
+                    writer.writerow({
+                        'epoch': str(epoch + 1).zfill(3),
+                        'Precision': f'{precision:.4f}',
+                        'Recall': f'{recall:.4f}',
+                        'mAP@50': f'{map50:.4f}',
+                        'mAP@50-95': f'{mean_ap:.4f}'
+                    })
                     f_csv.flush()
 
-                    if mean_ap > self.best_map:
+                    if mean_ap >= self.best_map:
                         self.best_map = mean_ap
-                        ckpt = {'model': copy.deepcopy(self.ema.ema if self.ema else self.model).half()}
+                        # Save model properly - deepcopy first, then convert to half
+                        save_model = copy.deepcopy(self.ema.ema if self.ema else self.model)
+                        save_model = save_model.cpu().half()
+                        ckpt = {'model': save_model}
                         torch.save(ckpt, 'weights/best.pt')
-                        del ckpt
-                    ckpt = {'model': copy.deepcopy(self.ema.ema if self.ema else self.model).half()}
+                        del save_model, ckpt
+                    # Save last checkpoint
+                    save_model = copy.deepcopy(self.ema.ema if self.ema else self.model)
+                    save_model = save_model.cpu().half()
+                    ckpt = {'model': save_model}
                     torch.save(ckpt, 'weights/last.pt')
-                    del ckpt
+                    del save_model, ckpt
 
         if self.args.local_rank == 0:
-            util.strip_optimizer('weights/best.pt')
-            util.strip_optimizer('weights/last.pt')
+            strip_optimizer('weights/best.pt')
+            strip_optimizer('weights/last.pt')
 
         torch.cuda.empty_cache()
 
@@ -250,7 +275,8 @@ class YoloTrainer:
             model = ckpt['model'].to(self.device).float()
 
         model.eval()
-        model.half()
+        # Keep model in float32 for more stable evaluation
+        model.float()
 
         iou_thresholds = torch.linspace(0.5, 0.95, 10).to(self.device)
         n_iou = iou_thresholds.numel()
@@ -259,14 +285,15 @@ class YoloTrainer:
         pbar = tqdm.tqdm(loader, desc='Evaluating')
 
         for images, targets, shapes in pbar:
-            images = images.to(self.device).half() / 255.0
+            images = images.to(self.device).float() / 255.0
             targets = targets.to(self.device)
             batch_size, _, height, width = images.shape
 
             outputs = model(images)
             targets[:, 2:] *= torch.tensor([width, height, width, height], device=self.device)
 
-            outputs = util.non_max_suppression(outputs, conf_thres=0.001, iou_thres=0.65)
+            # Use very low threshold to capture predictions during early training
+            outputs = non_max_suppression(outputs, conf_threshold=0.0001, iou_threshold=0.65)
 
             for i, output in enumerate(outputs):
                 labels = targets[targets[:, 0] == i, 1:]
@@ -278,7 +305,12 @@ class YoloTrainer:
                     continue
 
                 detections = output.clone()
-                util.scale(detections[:, :4], images[i].shape[1:], shapes[i][0], shapes[i][1])
+                if shapes[i] is not None:
+                    # shapes[i] = (orig_shape, ((ratio_h, ratio_w), (pad_h, pad_w)))
+                    orig_shape = shapes[i][0]
+                    gain = shapes[i][1][0]  # (ratio_h, ratio_w)
+                    pad = shapes[i][1][1]   # (pad_h, pad_w)
+                    scale(detections[:, :4], orig_shape, gain, pad)
 
                 if labels.shape[0]:
                     tbox = labels[:, 1:5].clone()
@@ -286,11 +318,12 @@ class YoloTrainer:
                     tbox[:, 1] = labels[:, 2] - labels[:, 4] / 2
                     tbox[:, 2] = labels[:, 1] + labels[:, 3] / 2
                     tbox[:, 3] = labels[:, 2] + labels[:, 4] / 2
-                    util.scale(tbox, images[i].shape[1:], shapes[i][0], shapes[i][1])
+                    if shapes[i] is not None:
+                        scale(tbox, orig_shape, gain, pad)
 
                     correct_np = np.zeros((detections.shape[0], n_iou), dtype=bool)
                     t_tensor = torch.cat((labels[:, 0:1], tbox), dim=1)
-                    iou = util.box_iou(t_tensor[:, 1:], detections[:, :4])
+                    iou = box_iou(t_tensor[:, 1:], detections[:, :4])
                     correct_class = t_tensor[:, 0:1] == detections[:, 5]
 
                     for j in range(n_iou):
@@ -310,15 +343,14 @@ class YoloTrainer:
         if metrics:
             metrics_np = [torch.cat(x, 0).cpu().numpy() for x in zip(*metrics)]
             if len(metrics_np) and metrics_np[0].any():
-                tp, fp, m_pre, m_rec, map50, mean_ap = util.compute_ap(*metrics_np)
+                tp, fp, m_pre, m_rec, map50, mean_ap = compute_ap(*metrics_np)
             else:
                 m_pre = m_rec = map50 = mean_ap = 0.0
         else:
             m_pre = m_rec = map50 = mean_ap = 0.0
 
-        print(f'Precision: {m_pre:.3g} Recall: {m_rec:.3g} mAP: {mean_ap:.3g}')
         model.float()
-        return map50, mean_ap
+        return m_pre, m_rec, map50, mean_ap
 
 
 def main():
@@ -342,8 +374,8 @@ def main():
     if args.local_rank == 0:
         os.makedirs('weights', exist_ok=True)
 
-    util.setup_seed()
-    util.setup_multi_processes()
+    setup_seed()
+    setup_multi_processes()
 
     # with open('config.yml', errors='ignore') as f:
     #     params = yaml.safe_load(f)

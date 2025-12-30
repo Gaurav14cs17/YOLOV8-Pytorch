@@ -1,7 +1,7 @@
 import math
 import torch
 from model.blocks import ConvBlock
-from utils import util
+from utils.boxes import make_anchors
 
 class DFL(torch.nn.Module):
     def __init__(self, ch=16):
@@ -61,8 +61,7 @@ class Head(torch.nn.Module):
         if self.training:
             return feats
 
-        # self.anchors, self.strides = [t.transpose(0, 1) for t in make_anchors(feats, self.stride, 0.5)]
-        self.anchors, self.strides = [t.transpose(0, 1) for t in Head.make_anchors(feats, self.stride, 0.5)]
+        self.anchors, self.strides = [t.transpose(0, 1) for t in make_anchors(feats, self.stride, 0.5)]
 
         batch = feats[0].shape[0]
         concat = torch.cat([f.view(batch, self.outputs_per_anchor, -1) for f in feats], dim=2)

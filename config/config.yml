@@ -1,3 +1,8 @@
+# Data paths
+data:
+  train: dataset_mini/images/train
+  val: dataset_mini/images/val
+
 lr0: 0.010                    # initial learning rate (SGD=1E-2, Adam=1E-3)
 lrf: 0.010                    # final OneCycleLR learning rate (lr0 * lrf)
 momentum: 0.93700000          # SGD momentum/Adam beta1
