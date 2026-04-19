@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 320">
+  <defs>
+    <linearGradient id="bgFct" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="320" fill="url(#bgFct)"/>
+  <text x="350" y="30" fill="#fff" font-family="Georgia, serif" font-size="20" text-anchor="middle" font-weight="bold">YOLOv8 Model Variants</text>
+  
+  <!-- Table header -->
+  <g transform="translate(50, 60)">
+    <rect x="0" y="0" width="600" height="30" rx="4" fill="#252547"/>
+    <text x="60" y="20" fill="#4ecdc4" font-family="Consolas" font-size="10" text-anchor="middle">Variant</text>
+    <text x="180" y="20" fill="#4ecdc4" font-family="Consolas" font-size="10" text-anchor="middle">Depth [d0,d1,d2]</text>
+    <text x="340" y="20" fill="#4ecdc4" font-family="Consolas" font-size="10" text-anchor="middle">Width [w0...w5]</text>
+    <text x="480" y="20" fill="#4ecdc4" font-family="Consolas" font-size="10" text-anchor="middle">Params</text>
+    <text x="560" y="20" fill="#4ecdc4" font-family="Consolas" font-size="10" text-anchor="middle">mAP</text>
+  </g>
+  
+  <!-- Rows -->
+  <g transform="translate(50, 95)">
+    <rect x="0" y="0" width="600" height="28" fill="#1a1a2e"/>
+    <text x="60" y="18" fill="#ff6b6b" font-family="Consolas" font-size="10" text-anchor="middle">YOLOv8n</text>
+    <text x="180" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[1, 2, 2]</text>
+    <text x="340" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[3, 16, 32, 64, 128, 256]</text>
+    <text x="480" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">3.2M</text>
+    <text x="560" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">37.3</text>
+  </g>
+  <g transform="translate(50, 125)">
+    <rect x="0" y="0" width="600" height="28" fill="#252547"/>
+    <text x="60" y="18" fill="#ffd93d" font-family="Consolas" font-size="10" text-anchor="middle">YOLOv8s</text>
+    <text x="180" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[1, 2, 2]</text>
+    <text x="340" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[3, 32, 64, 128, 256, 512]</text>
+    <text x="480" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">11.2M</text>
+    <text x="560" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">44.9</text>
+  </g>
+  <g transform="translate(50, 155)">
+    <rect x="0" y="0" width="600" height="28" fill="#1a1a2e"/>
+    <text x="60" y="18" fill="#4ecdc4" font-family="Consolas" font-size="10" text-anchor="middle">YOLOv8m</text>
+    <text x="180" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[2, 4, 4]</text>
+    <text x="340" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[3, 48, 96, 192, 384, 576]</text>
+    <text x="480" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">25.9M</text>
+    <text x="560" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">50.2</text>
+  </g>
+  <g transform="translate(50, 185)">
+    <rect x="0" y="0" width="600" height="28" fill="#252547"/>
+    <text x="60" y="18" fill="#ff6b6b" font-family="Consolas" font-size="10" text-anchor="middle">YOLOv8l</text>
+    <text x="180" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[3, 6, 6]</text>
+    <text x="340" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[3, 64, 128, 256, 512, 512]</text>
+    <text x="480" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">43.7M</text>
+    <text x="560" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">52.9</text>
+  </g>
+  <g transform="translate(50, 215)">
+    <rect x="0" y="0" width="600" height="28" fill="#1a1a2e"/>
+    <text x="60" y="18" fill="#9b59b6" font-family="Consolas" font-size="10" text-anchor="middle">YOLOv8x</text>
+    <text x="180" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[3, 6, 6]</text>
+    <text x="340" y="18" fill="#888" font-family="Consolas" font-size="9" text-anchor="middle">[3, 80, 160, 320, 640, 640]</text>
+    <text x="480" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">68.2M</text>
+    <text x="560" y="18" fill="#ccc" font-family="Consolas" font-size="9" text-anchor="middle">53.9</text>
+  </g>
+  
+  <!-- Usage -->
+  <g transform="translate(50, 260)">
+    <text x="300" y="15" fill="#888" font-family="Consolas" font-size="10" text-anchor="middle">Usage: model = yolo_v8_n(num_classes=80)  # or _s, _m, _l, _x</text>
+    <text x="300" y="35" fill="#4ecdc4" font-family="Consolas" font-size="9" text-anchor="middle">Depth controls CSP block repetitions, Width controls channel counts</text>
+  </g>
+</svg>
+

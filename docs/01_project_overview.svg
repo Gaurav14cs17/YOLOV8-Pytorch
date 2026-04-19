@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 550">
+  <defs>
+    <linearGradient id="bgProject" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f23"/>
+      <stop offset="100%" style="stop-color:#1a1a3a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="550" fill="url(#bgProject)"/>
+  
+  <!-- Title -->
+  <text x="500" y="40" fill="#fff" font-family="Georgia, serif" font-size="28" text-anchor="middle" font-weight="bold">
+    YOLOv8-Pytorch Complete Architecture
+  </text>
+  
+  <!-- Package Overview -->
+  <g transform="translate(50, 70)">
+    <!-- model package -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="200" height="140" rx="10" fill="#252547" stroke="#ff6b6b" stroke-width="2"/>
+      <text x="100" y="25" fill="#ff6b6b" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+        model/
+      </text>
+      <text x="100" y="50" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">backbone/</text>
+      <text x="100" y="68" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">neck/</text>
+      <text x="100" y="86" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">head/</text>
+      <text x="100" y="104" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">blocks/</text>
+      <text x="100" y="122" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">factory/ fusion/</text>
+    </g>
+    
+    <!-- dataloader package -->
+    <g transform="translate(230, 0)">
+      <rect x="0" y="0" width="200" height="140" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+      <text x="100" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+        dataloader/
+      </text>
+      <text x="100" y="55" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">dataset/</text>
+      <text x="100" y="75" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">transforms/</text>
+      <text x="100" y="95" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">augmentation/</text>
+      <text x="100" y="120" fill="#4ecdc4" font-family="Consolas, monospace" font-size="9" text-anchor="middle">Mosaic, MixUp, HSV</text>
+    </g>
+    
+    <!-- utils package -->
+    <g transform="translate(460, 0)">
+      <rect x="0" y="0" width="200" height="140" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+      <text x="100" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+        utils/
+      </text>
+      <text x="100" y="50" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">loss/ assigner/</text>
+      <text x="100" y="68" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">bbox/ metrics/</text>
+      <text x="100" y="86" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">ema/ meters/</text>
+      <text x="100" y="104" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">env/ model_utils/</text>
+      <text x="100" y="122" fill="#ffd93d" font-family="Consolas, monospace" font-size="9" text-anchor="middle">TAL, NMS, CIoU</text>
+    </g>
+    
+    <!-- qmodel package -->
+    <g transform="translate(690, 0)">
+      <rect x="0" y="0" width="200" height="140" rx="10" fill="#252547" stroke="#9b59b6" stroke-width="2"/>
+      <text x="100" y="25" fill="#9b59b6" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+        qmodel/
+      </text>
+      <text x="100" y="55" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">quantization/</text>
+      <text x="100" y="75" fill="#888" font-family="Consolas, monospace" font-size="10" text-anchor="middle">pruning/</text>
+      <text x="100" y="100" fill="#9b59b6" font-family="Consolas, monospace" font-size="9" text-anchor="middle">INT8 QAT</text>
+      <text x="100" y="118" fill="#9b59b6" font-family="Consolas, monospace" font-size="9" text-anchor="middle">Weight Pruning</text>
+    </g>
+  </g>
+  
+  <!-- Training Pipeline -->
+  <g transform="translate(50, 240)">
+    <rect x="0" y="0" width="900" height="140" rx="10" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+    <text x="450" y="25" fill="#fff" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Training Pipeline
+    </text>
+    
+    <!-- Steps -->
+    <g transform="translate(30, 45)">
+      <rect x="0" y="0" width="100" height="50" rx="5" fill="#4ecdc4"/>
+      <text x="50" y="20" fill="#000" font-family="Consolas, monospace" font-size="9" text-anchor="middle" font-weight="bold">DataLoader</text>
+      <text x="50" y="38" fill="#000" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Mosaic Aug</text>
+    </g>
+    <text x="140" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(155, 45)">
+      <rect x="0" y="0" width="100" height="50" rx="5" fill="#ff6b6b"/>
+      <text x="50" y="20" fill="#000" font-family="Consolas, monospace" font-size="9" text-anchor="middle" font-weight="bold">Model</text>
+      <text x="50" y="38" fill="#000" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Forward Pass</text>
+    </g>
+    <text x="265" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(280, 45)">
+      <rect x="0" y="0" width="100" height="50" rx="5" fill="#ffd93d"/>
+      <text x="50" y="20" fill="#000" font-family="Consolas, monospace" font-size="9" text-anchor="middle" font-weight="bold">TAL Assigner</text>
+      <text x="50" y="38" fill="#000" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Label Assign</text>
+    </g>
+    <text x="390" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(405, 45)">
+      <rect x="0" y="0" width="100" height="50" rx="5" fill="#9b59b6"/>
+      <text x="50" y="20" fill="#fff" font-family="Consolas, monospace" font-size="9" text-anchor="middle" font-weight="bold">Loss</text>
+      <text x="50" y="38" fill="#fff" font-family="Consolas, monospace" font-size="8" text-anchor="middle">CIoU + DFL</text>
+    </g>
+    <text x="515" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(530, 45)">
+      <rect x="0" y="0" width="100" height="50" rx="5" fill="#e74c3c"/>
+      <text x="50" y="20" fill="#fff" font-family="Consolas, monospace" font-size="9" text-anchor="middle" font-weight="bold">Backward</text>
+      <text x="50" y="38" fill="#fff" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Gradients</text>
+    </g>
+    <text x="640" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(655, 45)">
+      <rect x="0" y="0" width="100" height="50" rx="5" fill="#27ae60"/>
+      <text x="50" y="20" fill="#fff" font-family="Consolas, monospace" font-size="9" text-anchor="middle" font-weight="bold">EMA Update</text>
+      <text x="50" y="38" fill="#fff" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Smooth Weights</text>
+    </g>
+    <text x="765" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(780, 45)">
+      <rect x="0" y="0" width="100" height="50" rx="5" fill="#3498db"/>
+      <text x="50" y="20" fill="#fff" font-family="Consolas, monospace" font-size="9" text-anchor="middle" font-weight="bold">Metrics</text>
+      <text x="50" y="38" fill="#fff" font-family="Consolas, monospace" font-size="8" text-anchor="middle">mAP Eval</text>
+    </g>
+    
+    <text x="450" y="120" fill="#888" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">
+      Complete end-to-end training with Task-Aligned Assignment and CIoU Loss
+    </text>
+  </g>
+  
+  <!-- Inference Pipeline -->
+  <g transform="translate(50, 400)">
+    <rect x="0" y="0" width="900" height="130" rx="10" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+    <text x="450" y="25" fill="#fff" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Inference Pipeline
+    </text>
+    
+    <!-- Steps -->
+    <g transform="translate(80, 45)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#4ecdc4"/>
+      <text x="60" y="20" fill="#000" font-family="Consolas, monospace" font-size="10" text-anchor="middle" font-weight="bold">Input Image</text>
+      <text x="60" y="38" fill="#000" font-family="Consolas, monospace" font-size="8" text-anchor="middle">640x640</text>
+    </g>
+    <text x="210" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(230, 45)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#ff6b6b"/>
+      <text x="60" y="20" fill="#000" font-family="Consolas, monospace" font-size="10" text-anchor="middle" font-weight="bold">Fused Model</text>
+      <text x="60" y="38" fill="#000" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Conv-BN Fused</text>
+    </g>
+    <text x="360" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(380, 45)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#ffd93d"/>
+      <text x="60" y="20" fill="#000" font-family="Consolas, monospace" font-size="10" text-anchor="middle" font-weight="bold">Predictions</text>
+      <text x="60" y="38" fill="#000" font-family="Consolas, monospace" font-size="8" text-anchor="middle">8400 boxes</text>
+    </g>
+    <text x="510" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(530, 45)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#9b59b6"/>
+      <text x="60" y="20" fill="#fff" font-family="Consolas, monospace" font-size="10" text-anchor="middle" font-weight="bold">NMS</text>
+      <text x="60" y="38" fill="#fff" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Filter boxes</text>
+    </g>
+    <text x="660" y="70" fill="#fff" font-size="16">→</text>
+    
+    <g transform="translate(680, 45)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#27ae60"/>
+      <text x="60" y="20" fill="#fff" font-family="Consolas, monospace" font-size="10" text-anchor="middle" font-weight="bold">Detections</text>
+      <text x="60" y="38" fill="#fff" font-family="Consolas, monospace" font-size="8" text-anchor="middle">Boxes + Classes</text>
+    </g>
+    
+    <text x="450" y="115" fill="#888" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">
+      Optimized inference with fused layers and efficient NMS
+    </text>
+  </g>
+</svg>
+

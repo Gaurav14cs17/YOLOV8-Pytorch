@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 350">
+  <defs>
+    <linearGradient id="bgNk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="350" fill="url(#bgNk)"/>
+  <text x="350" y="30" fill="#fff" font-family="Georgia, serif" font-size="20" text-anchor="middle" font-weight="bold">FPN/PAN Neck Architecture</text>
+  
+  <!-- Backbone outputs -->
+  <g transform="translate(50, 60)">
+    <text x="40" y="0" fill="#ff6b6b" font-family="Consolas" font-size="11" text-anchor="middle">Backbone</text>
+    <rect x="0" y="10" width="80" height="35" rx="4" fill="#ff6b6b"/>
+    <text x="40" y="32" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle">P3 80x80</text>
+    <rect x="0" y="55" width="80" height="35" rx="4" fill="#ff6b6b"/>
+    <text x="40" y="77" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle">P4 40x40</text>
+    <rect x="0" y="100" width="80" height="35" rx="4" fill="#ff6b6b"/>
+    <text x="40" y="122" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle">P5 20x20</text>
+  </g>
+  
+  <!-- Top-Down FPN -->
+  <g transform="translate(180, 60)">
+    <text x="60" y="0" fill="#4ecdc4" font-family="Consolas" font-size="11" text-anchor="middle">Top-Down (FPN)</text>
+    <rect x="0" y="100" width="50" height="30" rx="4" fill="#4ecdc4"/>
+    <text x="25" y="120" fill="#000" font-family="Consolas" font-size="8" text-anchor="middle">Up 2x</text>
+    <rect x="60" y="55" width="60" height="40" rx="4" fill="#252547" stroke="#4ecdc4" stroke-width="1"/>
+    <text x="90" y="75" fill="#4ecdc4" font-family="Consolas" font-size="8" text-anchor="middle">CSP</text>
+    <text x="90" y="88" fill="#888" font-family="Consolas" font-size="7" text-anchor="middle">P5+P4</text>
+    <rect x="60" y="10" width="60" height="40" rx="4" fill="#252547" stroke="#4ecdc4" stroke-width="1"/>
+    <text x="90" y="30" fill="#4ecdc4" font-family="Consolas" font-size="8" text-anchor="middle">CSP</text>
+    <text x="90" y="43" fill="#888" font-family="Consolas" font-size="7" text-anchor="middle">M4+P3</text>
+  </g>
+  
+  <!-- Bottom-Up PAN -->
+  <g transform="translate(330, 60)">
+    <text x="60" y="0" fill="#ffd93d" font-family="Consolas" font-size="11" text-anchor="middle">Bottom-Up (PAN)</text>
+    <rect x="0" y="10" width="50" height="30" rx="4" fill="#ffd93d"/>
+    <text x="25" y="28" fill="#000" font-family="Consolas" font-size="7" text-anchor="middle">Down 2x</text>
+    <rect x="60" y="55" width="60" height="40" rx="4" fill="#252547" stroke="#ffd93d" stroke-width="1"/>
+    <text x="90" y="75" fill="#ffd93d" font-family="Consolas" font-size="8" text-anchor="middle">CSP</text>
+    <text x="90" y="88" fill="#888" font-family="Consolas" font-size="7" text-anchor="middle">N3+M4</text>
+    <rect x="60" y="100" width="60" height="40" rx="4" fill="#252547" stroke="#ffd93d" stroke-width="1"/>
+    <text x="90" y="120" fill="#ffd93d" font-family="Consolas" font-size="8" text-anchor="middle">CSP</text>
+    <text x="90" y="133" fill="#888" font-family="Consolas" font-size="7" text-anchor="middle">N4+P5</text>
+  </g>
+  
+  <!-- Output -->
+  <g transform="translate(500, 60)">
+    <text x="60" y="0" fill="#fff" font-family="Consolas" font-size="11" text-anchor="middle">Output</text>
+    <rect x="20" y="10" width="80" height="35" rx="4" fill="#4ecdc4"/>
+    <text x="60" y="32" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle">N3 Small</text>
+    <rect x="20" y="55" width="80" height="35" rx="4" fill="#ffd93d"/>
+    <text x="60" y="77" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle">N4 Medium</text>
+    <rect x="20" y="100" width="80" height="35" rx="4" fill="#ff6b6b"/>
+    <text x="60" y="122" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle">N5 Large</text>
+  </g>
+  
+  <!-- Description -->
+  <g transform="translate(50, 220)">
+    <rect x="0" y="0" width="600" height="110" rx="8" fill="#1a1a2e"/>
+    <text x="300" y="25" fill="#fff" font-family="Consolas" font-size="11" text-anchor="middle" font-weight="bold">Key Features</text>
+    <text x="20" y="50" fill="#4ecdc4" font-family="Consolas" font-size="9">FPN: Propagates semantic features top-down via upsampling</text>
+    <text x="20" y="70" fill="#ffd93d" font-family="Consolas" font-size="9">PAN: Re-propagates localization features bottom-up</text>
+    <text x="20" y="90" fill="#ff6b6b" font-family="Consolas" font-size="9">Multi-scale: Detect objects of different sizes at each level</text>
+  </g>
+</svg>
+

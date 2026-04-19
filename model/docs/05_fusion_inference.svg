@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bgFusion" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bgFusion)"/>
+  
+  <!-- Title -->
+  <text x="400" y="35" fill="#fff" font-family="Georgia, serif" font-size="24" text-anchor="middle" font-weight="bold">
+    Conv-BN Fusion for Inference
+  </text>
+  
+  <!-- Before Fusion -->
+  <g transform="translate(50, 70)">
+    <text x="150" y="0" fill="#ff6b6b" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Before Fusion (Training)
+    </text>
+    
+    <rect x="0" y="20" width="300" height="150" rx="10" fill="#252547" stroke="#ff6b6b" stroke-width="2"/>
+    
+    <!-- Conv2d -->
+    <g transform="translate(20, 40)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#ff6b6b"/>
+      <text x="60" y="20" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle" font-weight="bold">Conv2d</text>
+      <text x="60" y="38" fill="#000" font-family="Consolas, monospace" font-size="9" text-anchor="middle">W, no bias</text>
+    </g>
+    
+    <text x="155" y="70" fill="#fff" font-size="18">→</text>
+    
+    <!-- BatchNorm -->
+    <g transform="translate(165, 40)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#4ecdc4"/>
+      <text x="60" y="20" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle" font-weight="bold">BatchNorm2d</text>
+      <text x="60" y="38" fill="#000" font-family="Consolas, monospace" font-size="9" text-anchor="middle">gamma, beta, mu, var</text>
+    </g>
+    
+    <!-- Equations -->
+    <g transform="translate(20, 105)">
+      <text x="0" y="0" fill="#888" font-family="Consolas, monospace" font-size="10">Conv: y = W * x</text>
+      <text x="0" y="20" fill="#888" font-family="Consolas, monospace" font-size="10">BN: z = gamma * (y - mu) / sqrt(var + eps) + beta</text>
+      <text x="0" y="45" fill="#ff6b6b" font-family="Consolas, monospace" font-size="10">2 ops, 4 params stored</text>
+    </g>
+  </g>
+  
+  <!-- Arrow -->
+  <g transform="translate(380, 145)">
+    <text x="0" y="0" fill="#ffd93d" font-family="Consolas, monospace" font-size="24">→</text>
+    <text x="0" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="10">Fuse</text>
+  </g>
+  
+  <!-- After Fusion -->
+  <g transform="translate(450, 70)">
+    <text x="150" y="0" fill="#4ecdc4" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      After Fusion (Inference)
+    </text>
+    
+    <rect x="0" y="20" width="300" height="150" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    
+    <!-- Fused Conv -->
+    <g transform="translate(90, 40)">
+      <rect x="0" y="0" width="120" height="50" rx="5" fill="#4ecdc4"/>
+      <text x="60" y="20" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle" font-weight="bold">Fused Conv2d</text>
+      <text x="60" y="38" fill="#000" font-family="Consolas, monospace" font-size="9" text-anchor="middle">W_fused, b_fused</text>
+    </g>
+    
+    <!-- Equations -->
+    <g transform="translate(20, 105)">
+      <text x="0" y="0" fill="#888" font-family="Consolas, monospace" font-size="10">W_fused = W * gamma / sqrt(var + eps)</text>
+      <text x="0" y="20" fill="#888" font-family="Consolas, monospace" font-size="10">b_fused = beta - mu * gamma / sqrt(var + eps)</text>
+      <text x="0" y="45" fill="#4ecdc4" font-family="Consolas, monospace" font-size="10">1 op, 2 params (faster!)</text>
+    </g>
+  </g>
+  
+  <!-- Benefits -->
+  <g transform="translate(50, 250)">
+    <rect x="0" y="0" width="700" height="130" rx="10" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+    <text x="350" y="25" fill="#fff" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Fusion Benefits
+    </text>
+    
+    <g transform="translate(30, 50)">
+      <circle cx="0" cy="8" r="5" fill="#4ecdc4"/>
+      <text x="15" y="12" fill="#ccc" font-family="Arial, sans-serif" font-size="11">
+        Reduced memory bandwidth: No intermediate tensor between Conv and BN
+      </text>
+    </g>
+    <g transform="translate(30, 75)">
+      <circle cx="0" cy="8" r="5" fill="#ffd93d"/>
+      <text x="15" y="12" fill="#ccc" font-family="Arial, sans-serif" font-size="11">
+        Fewer operations: Single fused kernel instead of two separate ops
+      </text>
+    </g>
+    <g transform="translate(30, 100)">
+      <circle cx="0" cy="8" r="5" fill="#ff6b6b"/>
+      <text x="15" y="12" fill="#ccc" font-family="Arial, sans-serif" font-size="11">
+        Typical speedup: 10-30% faster inference with identical results
+      </text>
+    </g>
+  </g>
+</svg>
+
