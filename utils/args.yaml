@@ -1,0 +1,17 @@
+lr0: 0.010
+lrf: 0.010
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 1
+warmup_momentum: 0.8
+warmup_bias_lr: 0.10
+box: 7.5
+cls: 0.5
+dfl: 1.5
+variant: nano
+names:
+  0: person
+  1: bicycle
+  2: car
+  3: motorcycle
+  4: airplane

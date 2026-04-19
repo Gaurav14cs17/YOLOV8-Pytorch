@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 250">
+  <defs>
+    <linearGradient id="bgQat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="250" fill="url(#bgQat)"/>
+  <text x="350" y="25" fill="#fff" font-family="Georgia, serif" font-size="18" text-anchor="middle" font-weight="bold">Quantization-Aware Training Flow</text>
+  
+  <!-- Flow -->
+  <g transform="translate(50, 50)">
+    <rect x="0" y="0" width="100" height="50" rx="4" fill="#ff6b6b"/>
+    <text x="50" y="25" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle" font-weight="bold">QuantStub</text>
+    <text x="50" y="40" fill="#000" font-family="Consolas" font-size="8" text-anchor="middle">FP32→INT8</text>
+  </g>
+  <text x="165" y="75" fill="#fff" font-size="14">→</text>
+  <g transform="translate(180, 50)">
+    <rect x="0" y="0" width="100" height="50" rx="4" fill="#4ecdc4"/>
+    <text x="50" y="25" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle" font-weight="bold">Backbone</text>
+    <text x="50" y="40" fill="#000" font-family="Consolas" font-size="8" text-anchor="middle">QNN Layers</text>
+  </g>
+  <text x="295" y="75" fill="#fff" font-size="14">→</text>
+  <g transform="translate(310, 50)">
+    <rect x="0" y="0" width="100" height="50" rx="4" fill="#ffd93d"/>
+    <text x="50" y="25" fill="#000" font-family="Consolas" font-size="9" text-anchor="middle" font-weight="bold">Neck</text>
+    <text x="50" y="40" fill="#000" font-family="Consolas" font-size="8" text-anchor="middle">FloatFunct.</text>
+  </g>
+  <text x="425" y="75" fill="#fff" font-size="14">→</text>
+  <g transform="translate(440, 50)">
+    <rect x="0" y="0" width="100" height="50" rx="4" fill="#9b59b6"/>
+    <text x="50" y="25" fill="#fff" font-family="Consolas" font-size="9" text-anchor="middle" font-weight="bold">Head</text>
+    <text x="50" y="40" fill="#fff" font-family="Consolas" font-size="8" text-anchor="middle">Detection</text>
+  </g>
+  <text x="555" y="75" fill="#fff" font-size="14">→</text>
+  <g transform="translate(570, 50)">
+    <rect x="0" y="0" width="100" height="50" rx="4" fill="#27ae60"/>
+    <text x="50" y="25" fill="#fff" font-family="Consolas" font-size="9" text-anchor="middle" font-weight="bold">DeQuantStub</text>
+    <text x="50" y="40" fill="#fff" font-family="Consolas" font-size="8" text-anchor="middle">INT8→FP32</text>
+  </g>
+  
+  <!-- Key components -->
+  <g transform="translate(50, 130)">
+    <rect x="0" y="0" width="620" height="100" rx="8" fill="#1a1a2e"/>
+    <text x="310" y="20" fill="#fff" font-family="Consolas" font-size="11" text-anchor="middle" font-weight="bold">Key Components</text>
+    <text x="20" y="45" fill="#4ecdc4" font-family="Consolas" font-size="9">Swish:</text>
+    <text x="70" y="45" fill="#888" font-family="Consolas" font-size="9">nnq.FloatFunctional.mul(sigmoid(x), x)</text>
+    <text x="20" y="65" fill="#ffd93d" font-family="Consolas" font-size="9">CSPBlock:</text>
+    <text x="85" y="65" fill="#888" font-family="Consolas" font-size="9">nnq.FloatFunctional.cat() for feature concat</text>
+    <text x="20" y="85" fill="#ff6b6b" font-family="Consolas" font-size="9">Residual:</text>
+    <text x="85" y="85" fill="#888" font-family="Consolas" font-size="9">nnq.FloatFunctional.add() for skip connections</text>
+  </g>
+</svg>
+

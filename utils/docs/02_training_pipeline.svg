@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500">
+  <defs>
+    <linearGradient id="bgPipeline" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="500" fill="url(#bgPipeline)"/>
+  
+  <!-- Title -->
+  <text x="500" y="35" fill="#fff" font-family="Georgia, serif" font-size="24" text-anchor="middle" font-weight="bold">
+    YOLOv8 Training Pipeline with Utils
+  </text>
+  
+  <!-- Pipeline Flow -->
+  <!-- Step 1: Setup -->
+  <g transform="translate(50, 70)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="90" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      1. SETUP
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">setup_seed()</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">setup_multi_processes()</text>
+    <text x="90" y="95" fill="#4ecdc4" font-family="Consolas, monospace" font-size="8" text-anchor="middle">env/</text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M240,120 L270,120" stroke="#fff" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Step 2: Initialize -->
+  <g transform="translate(280, 70)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+    <text x="90" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      2. INITIALIZE
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">ComputeLoss(model)</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">EMA(model)</text>
+    <text x="90" y="95" fill="#ffd93d" font-family="Consolas, monospace" font-size="8" text-anchor="middle">loss/, ema/</text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M470,120 L500,120" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Step 3: Forward -->
+  <g transform="translate(510, 70)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#252547" stroke="#ff6b6b" stroke-width="2"/>
+    <text x="90" y="25" fill="#ff6b6b" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      3. FORWARD
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">make_anchors()</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">TaskAlignedAssigner()</text>
+    <text x="90" y="95" fill="#ff6b6b" font-family="Consolas, monospace" font-size="8" text-anchor="middle">bbox/, assigner/</text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M700,120 L730,120" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Step 4: Loss -->
+  <g transform="translate(740, 70)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="90" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      4. LOSS
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">BCE + CIoU + DFL</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">loss_meter.update()</text>
+    <text x="90" y="95" fill="#4ecdc4" font-family="Consolas, monospace" font-size="8" text-anchor="middle">loss/, meters/</text>
+  </g>
+  
+  <!-- Second Row -->
+  <!-- Step 5: Backward -->
+  <g transform="translate(740, 200)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+    <text x="90" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      5. BACKWARD
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">loss.backward()</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">clip_gradients()</text>
+    <text x="90" y="95" fill="#ffd93d" font-family="Consolas, monospace" font-size="8" text-anchor="middle">model_utils/</text>
+  </g>
+  
+  <!-- Vertical arrow -->
+  <path d="M830,170 L830,200" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Arrow left -->
+  <path d="M740,250 L710,250" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Step 6: Update -->
+  <g transform="translate(510, 200)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#252547" stroke="#ff6b6b" stroke-width="2"/>
+    <text x="90" y="25" fill="#ff6b6b" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      6. UPDATE
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">optimizer.step()</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">ema.update(model)</text>
+    <text x="90" y="95" fill="#ff6b6b" font-family="Consolas, monospace" font-size="8" text-anchor="middle">ema/</text>
+  </g>
+  
+  <!-- Arrow left -->
+  <path d="M510,250 L480,250" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Step 7: Evaluate -->
+  <g transform="translate(280, 200)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="90" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      7. EVALUATE
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">non_max_suppression()</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">compute_ap()</text>
+    <text x="90" y="95" fill="#4ecdc4" font-family="Consolas, monospace" font-size="8" text-anchor="middle">bbox/, metrics/</text>
+  </g>
+  
+  <!-- Arrow left -->
+  <path d="M280,250 L250,250" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Step 8: Deploy -->
+  <g transform="translate(50, 200)">
+    <rect x="0" y="0" width="180" height="100" rx="10" fill="#4ecdc4" stroke="#fff" stroke-width="2"/>
+    <text x="90" y="25" fill="#000" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      8. DEPLOY
+    </text>
+    <rect x="15" y="35" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="51" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">strip_optimizer()</text>
+    <rect x="15" y="62" width="150" height="22" rx="5" fill="#1a1a2e"/>
+    <text x="90" y="78" fill="#ccc" font-family="Consolas, monospace" font-size="9" text-anchor="middle">FP16 export</text>
+    <text x="90" y="95" fill="#000" font-family="Consolas, monospace" font-size="8" text-anchor="middle">model_utils/</text>
+  </g>
+  
+  <!-- Legend -->
+  <g transform="translate(50, 340)">
+    <rect x="0" y="0" width="900" height="140" rx="10" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+    <text x="450" y="25" fill="#fff" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Module Usage Summary
+    </text>
+    
+    <!-- Legend items -->
+    <g transform="translate(30, 45)">
+      <rect x="0" y="0" width="15" height="15" fill="#4ecdc4" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">env/ - Environment setup</text>
+    </g>
+    
+    <g transform="translate(230, 45)">
+      <rect x="0" y="0" width="15" height="15" fill="#ffd93d" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">loss/ - Loss computation</text>
+    </g>
+    
+    <g transform="translate(430, 45)">
+      <rect x="0" y="0" width="15" height="15" fill="#ff6b6b" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">ema/ - Weight averaging</text>
+    </g>
+    
+    <g transform="translate(630, 45)">
+      <rect x="0" y="0" width="15" height="15" fill="#4ecdc4" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">bbox/ - Box operations</text>
+    </g>
+    
+    <g transform="translate(30, 75)">
+      <rect x="0" y="0" width="15" height="15" fill="#ff6b6b" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">assigner/ - Label assignment</text>
+    </g>
+    
+    <g transform="translate(230, 75)">
+      <rect x="0" y="0" width="15" height="15" fill="#ffd93d" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">meters/ - Statistics tracking</text>
+    </g>
+    
+    <g transform="translate(430, 75)">
+      <rect x="0" y="0" width="15" height="15" fill="#4ecdc4" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">metrics/ - Evaluation metrics</text>
+    </g>
+    
+    <g transform="translate(630, 75)">
+      <rect x="0" y="0" width="15" height="15" fill="#ffd93d" rx="3"/>
+      <text x="25" y="12" fill="#ccc" font-family="Consolas, monospace" font-size="11">model_utils/ - Deploy tools</text>
+    </g>
+    
+    <text x="450" y="115" fill="#888" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">
+      Each module contains: Python code + docs/ folder with README.md and SVG diagrams
+    </text>
+  </g>
+</svg>
+

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500">
+  <defs>
+    <linearGradient id="bgGrad5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="500" fill="url(#bgGrad5)"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#fff" font-family="Georgia, serif" font-size="24" text-anchor="middle" font-weight="bold">
+    scale() - Coordinate Transformation Pipeline
+  </text>
+  
+  <!-- Model Output (Letterboxed) -->
+  <g transform="translate(50, 60)">
+    <rect x="0" y="0" width="250" height="250" rx="10" fill="#252547" stroke="#ff6b6b" stroke-width="2"/>
+    <text x="125" y="25" fill="#ff6b6b" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Model Input (640x640)
+    </text>
+    
+    <!-- Letterbox padding visualization -->
+    <rect x="20" y="50" width="210" height="180" fill="#333" stroke="#666" stroke-width="1"/>
+    
+    <!-- Top padding -->
+    <rect x="20" y="50" width="210" height="30" fill="#444" stroke="none"/>
+    <text x="125" y="70" fill="#888" font-family="Consolas, monospace" font-size="9" text-anchor="middle">padding</text>
+    
+    <!-- Bottom padding -->
+    <rect x="20" y="200" width="210" height="30" fill="#444" stroke="none"/>
+    <text x="125" y="220" fill="#888" font-family="Consolas, monospace" font-size="9" text-anchor="middle">padding</text>
+    
+    <!-- Actual image area -->
+    <rect x="20" y="80" width="210" height="120" fill="#1a1a2e" stroke="#4ecdc4" stroke-width="1"/>
+    <text x="125" y="145" fill="#4ecdc4" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">
+      Actual Image
+    </text>
+    
+    <!-- Detection box (in letterboxed space) -->
+    <rect x="60" y="100" width="80" height="50" fill="none" stroke="#ffd93d" stroke-width="2"/>
+    <text x="100" y="125" fill="#ffd93d" font-family="Consolas, monospace" font-size="9" text-anchor="middle">bbox</text>
+  </g>
+  
+  <!-- Arrow 1 -->
+  <g transform="translate(310, 180)">
+    <path d="M0,0 L70,0" stroke="#fff" stroke-width="2"/>
+    <polygon points="70,-6 85,0 70,6" fill="#fff"/>
+    <text x="40" y="-10" fill="#ff6b6b" font-family="Consolas, monospace" font-size="10" text-anchor="middle">
+      - pad
+    </text>
+  </g>
+  
+  <!-- After Padding Removal -->
+  <g transform="translate(400, 60)">
+    <rect x="0" y="0" width="200" height="200" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="100" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Remove Padding
+    </text>
+    
+    <rect x="20" y="50" width="160" height="130" fill="#1a1a2e" stroke="#4ecdc4" stroke-width="1"/>
+    
+    <!-- Detection box (shifted) -->
+    <rect x="50" y="65" width="70" height="45" fill="none" stroke="#ffd93d" stroke-width="2"/>
+    <text x="85" y="90" fill="#ffd93d" font-family="Consolas, monospace" font-size="9" text-anchor="middle">bbox</text>
+  </g>
+  
+  <!-- Arrow 2 -->
+  <g transform="translate(610, 180)">
+    <path d="M0,0 L70,0" stroke="#fff" stroke-width="2"/>
+    <polygon points="70,-6 85,0 70,6" fill="#fff"/>
+    <text x="40" y="-10" fill="#4ecdc4" font-family="Consolas, monospace" font-size="10" text-anchor="middle">
+      / gain
+    </text>
+  </g>
+  
+  <!-- Original Image Size -->
+  <g transform="translate(700, 60)">
+    <rect x="0" y="0" width="180" height="250" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+    <text x="90" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Original Size
+    </text>
+    
+    <rect x="15" y="45" width="150" height="190" fill="#1a1a2e" stroke="#ffd93d" stroke-width="1"/>
+    <text x="90" y="145" fill="#888" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">
+      1920x1080
+    </text>
+    
+    <!-- Detection box (scaled) -->
+    <rect x="40" y="70" width="90" height="60" fill="rgba(255,215,61,0.3)" stroke="#ffd93d" stroke-width="3"/>
+    <text x="85" y="105" fill="#ffd93d" font-family="Consolas, monospace" font-size="10" text-anchor="middle">bbox</text>
+  </g>
+  
+  <!-- Code Explanation -->
+  <g transform="translate(50, 330)">
+    <rect x="0" y="0" width="830" height="150" rx="10" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+    <text x="20" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="14" font-weight="bold">
+      scale(coords, shape1, gain, pad):
+    </text>
+    
+    <text x="20" y="55" fill="#ff6b6b" font-family="Consolas, monospace" font-size="11">Step 1:</text>
+    <text x="90" y="55" fill="#ccc" font-family="Consolas, monospace" font-size="11">
+      coords[:, [0, 2]] -= pad[0]  # Remove x padding
+    </text>
+    <text x="90" y="72" fill="#ccc" font-family="Consolas, monospace" font-size="11">
+      coords[:, [1, 3]] -= pad[1]  # Remove y padding
+    </text>
+    
+    <text x="20" y="97" fill="#4ecdc4" font-family="Consolas, monospace" font-size="11">Step 2:</text>
+    <text x="90" y="97" fill="#ccc" font-family="Consolas, monospace" font-size="11">
+      coords[:, :4] /= gain  # Scale to original image size
+    </text>
+    
+    <text x="20" y="122" fill="#ffd93d" font-family="Consolas, monospace" font-size="11">Step 3:</text>
+    <text x="90" y="122" fill="#ccc" font-family="Consolas, monospace" font-size="11">
+      clamp_(0, shape1)  # Clip to image boundaries
+    </text>
+  </g>
+</svg>
+

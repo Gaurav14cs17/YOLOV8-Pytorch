@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1100">
+  <!-- Background -->
+  <rect width="1000" height="1100" fill="#0F172A"/>
+  
+  <!-- Title -->
+  <text x="500" y="40" text-anchor="middle" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+    Comparison of Label Assignment Algorithms
+  </text>
+  
+  <!-- Algorithm 1: Max IoU -->
+  <g transform="translate(30, 80)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="#1E293B" stroke="#EF4444" stroke-width="2"/>
+    <text x="150" y="30" text-anchor="middle" fill="#F87171" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Max IoU Assignment
+    </text>
+    <text x="150" y="50" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="10">Faster R-CNN, SSD</text>
+    
+    <g transform="translate(20, 70)">
+      <text x="0" y="0" fill="#94A3B8" font-size="11">Method:</text>
+      <text x="0" y="18" fill="#64748B" font-size="10">• Assign anchor to GT with max IoU</text>
+      <text x="0" y="34" fill="#64748B" font-size="10">• Threshold: IoU &gt; 0.5 = positive</text>
+      <text x="0" y="50" fill="#64748B" font-size="10">• IoU &lt; 0.4 = negative</text>
+      
+      <text x="0" y="75" fill="#EF4444" font-size="11" font-weight="bold">Limitations:</text>
+      <text x="0" y="93" fill="#FCA5A5" font-size="10">✗ Fixed threshold for all objects</text>
+      <text x="0" y="109" fill="#FCA5A5" font-size="10">✗ Ignores prediction quality</text>
+      <text x="0" y="125" fill="#FCA5A5" font-size="10">✗ Many false negatives for hard obj</text>
+    </g>
+  </g>
+  
+  <!-- Algorithm 2: ATSS -->
+  <g transform="translate(350, 80)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+    <text x="150" y="30" text-anchor="middle" fill="#FBBF24" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      ATSS
+    </text>
+    <text x="150" y="50" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="10">Adaptive Training Sample Selection</text>
+    
+    <g transform="translate(20, 70)">
+      <text x="0" y="0" fill="#94A3B8" font-size="11">Method:</text>
+      <text x="0" y="18" fill="#64748B" font-size="10">• Select k nearest anchors per scale</text>
+      <text x="0" y="34" fill="#64748B" font-size="10">• Compute mean+std of IoU</text>
+      <text x="0" y="50" fill="#64748B" font-size="10">• Dynamic threshold per GT</text>
+      
+      <text x="0" y="75" fill="#10B981" font-size="11" font-weight="bold">Improvements:</text>
+      <text x="0" y="93" fill="#6EE7B7" font-size="10">✓ Adaptive threshold per object</text>
+      <text x="0" y="109" fill="#FCA5A5" font-size="10">✗ Still IoU-only (no cls quality)</text>
+      <text x="0" y="125" fill="#FCA5A5" font-size="10">✗ Statistical threshold can be noisy</text>
+    </g>
+  </g>
+  
+  <!-- Algorithm 3: SimOTA -->
+  <g transform="translate(670, 80)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="#1E293B" stroke="#8B5CF6" stroke-width="2"/>
+    <text x="150" y="30" text-anchor="middle" fill="#A78BFA" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      SimOTA
+    </text>
+    <text x="150" y="50" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="10">YOLOX - Simplified OTA</text>
+    
+    <g transform="translate(20, 70)">
+      <text x="0" y="0" fill="#94A3B8" font-size="11">Method:</text>
+      <text x="0" y="18" fill="#64748B" font-size="10">• Cost = λ₁·cls + λ₂·reg + λ₃·center</text>
+      <text x="0" y="34" fill="#64748B" font-size="10">• Dynamic k based on IoU sum</text>
+      <text x="0" y="50" fill="#64748B" font-size="10">• Center prior for filtering</text>
+      
+      <text x="0" y="75" fill="#10B981" font-size="11" font-weight="bold">Improvements:</text>
+      <text x="0" y="93" fill="#6EE7B7" font-size="10">✓ Uses both cls and reg quality</text>
+      <text x="0" y="109" fill="#6EE7B7" font-size="10">✓ Dynamic k per GT</text>
+      <text x="0" y="125" fill="#FCA5A5" font-size="10">✗ Complex cost computation</text>
+    </g>
+  </g>
+  
+  <!-- Algorithm 4: Hungarian -->
+  <g transform="translate(30, 300)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="#1E293B" stroke="#3B82F6" stroke-width="2"/>
+    <text x="150" y="30" text-anchor="middle" fill="#60A5FA" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Hungarian Matching
+    </text>
+    <text x="150" y="50" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="10">DETR, Deformable DETR</text>
+    
+    <g transform="translate(20, 70)">
+      <text x="0" y="0" fill="#94A3B8" font-size="11">Method:</text>
+      <text x="0" y="18" fill="#64748B" font-size="10">• One-to-one assignment</text>
+      <text x="0" y="34" fill="#64748B" font-size="10">• Bipartite matching algorithm</text>
+      <text x="0" y="50" fill="#64748B" font-size="10">• Cost = cls + box + giou</text>
+      
+      <text x="0" y="75" fill="#10B981" font-size="11" font-weight="bold">Improvements:</text>
+      <text x="0" y="93" fill="#6EE7B7" font-size="10">✓ No NMS needed</text>
+      <text x="0" y="109" fill="#6EE7B7" font-size="10">✓ Optimal global matching</text>
+      <text x="0" y="125" fill="#FCA5A5" font-size="10">✗ Slow training, needs many queries</text>
+    </g>
+  </g>
+  
+  <!-- Algorithm 5: PAA -->
+  <g transform="translate(350, 300)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="#1E293B" stroke="#EC4899" stroke-width="2"/>
+    <text x="150" y="30" text-anchor="middle" fill="#F472B6" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      PAA
+    </text>
+    <text x="150" y="50" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="10">Probabilistic Anchor Assignment</text>
+    
+    <g transform="translate(20, 70)">
+      <text x="0" y="0" fill="#94A3B8" font-size="11">Method:</text>
+      <text x="0" y="18" fill="#64748B" font-size="10">• Score = cls × IoU</text>
+      <text x="0" y="34" fill="#64748B" font-size="10">• GMM to separate pos/neg</text>
+      <text x="0" y="50" fill="#64748B" font-size="10">• Learned threshold per GT</text>
+      
+      <text x="0" y="75" fill="#10B981" font-size="11" font-weight="bold">Improvements:</text>
+      <text x="0" y="93" fill="#6EE7B7" font-size="10">✓ Joint cls-loc score</text>
+      <text x="0" y="109" fill="#6EE7B7" font-size="10">✓ Probabilistic separation</text>
+      <text x="0" y="125" fill="#FCA5A5" font-size="10">✗ GMM fitting is expensive</text>
+    </g>
+  </g>
+  
+  <!-- Algorithm 6: Task-Aligned (TAL) -->
+  <g transform="translate(670, 300)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="#065F46" stroke="#10B981" stroke-width="3"/>
+    <text x="150" y="30" text-anchor="middle" fill="#34D399" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Task-Aligned (TAL)
+    </text>
+    <text x="150" y="50" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="10">YOLOv8, PP-YOLOE</text>
+    
+    <g transform="translate(20, 70)">
+      <text x="0" y="0" fill="#D1FAE5" font-size="11">Method:</text>
+      <text x="0" y="18" fill="#A7F3D0" font-size="10">• metric = score^α × IoU^β</text>
+      <text x="0" y="34" fill="#A7F3D0" font-size="10">• Fixed top-k per GT</text>
+      <text x="0" y="50" fill="#A7F3D0" font-size="10">• Soft labels from metric</text>
+      
+      <text x="0" y="75" fill="#34D399" font-size="11" font-weight="bold">Advantages:</text>
+      <text x="0" y="93" fill="#6EE7B7" font-size="10">✓ Simple and efficient</text>
+      <text x="0" y="109" fill="#6EE7B7" font-size="10">✓ Balances cls + loc quality</text>
+      <text x="0" y="125" fill="#6EE7B7" font-size="10">✓ Soft labels improve training</text>
+    </g>
+  </g>
+  
+  <!-- Comparison Table -->
+  <g transform="translate(30, 530)">
+    <text x="470" y="0" text-anchor="middle" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="18" font-weight="bold">
+      Feature Comparison Matrix
+    </text>
+    
+    <g transform="translate(0, 25)">
+      <!-- Table Header -->
+      <rect x="0" y="0" width="940" height="40" fill="#334155"/>
+      <text x="100" y="26" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Algorithm</text>
+      <text x="230" y="26" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Uses Cls Score</text>
+      <text x="350" y="26" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Dynamic k</text>
+      <text x="470" y="26" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Soft Labels</text>
+      <text x="590" y="26" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Speed</text>
+      <text x="710" y="26" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Complexity</text>
+      <text x="850" y="26" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Best For</text>
+      
+      <!-- Row 1: Max IoU -->
+      <rect x="0" y="45" width="940" height="35" fill="#1E293B"/>
+      <text x="100" y="68" text-anchor="middle" fill="#F87171" font-size="10">Max IoU</text>
+      <text x="230" y="68" text-anchor="middle" fill="#EF4444" font-size="14">✗</text>
+      <text x="350" y="68" text-anchor="middle" fill="#EF4444" font-size="14">✗</text>
+      <text x="470" y="68" text-anchor="middle" fill="#EF4444" font-size="14">✗</text>
+      <text x="590" y="68" text-anchor="middle" fill="#10B981" font-size="10">Fast</text>
+      <text x="710" y="68" text-anchor="middle" fill="#10B981" font-size="10">Low</text>
+      <text x="850" y="68" text-anchor="middle" fill="#94A3B8" font-size="9">Two-stage</text>
+      
+      <!-- Row 2: ATSS -->
+      <rect x="0" y="85" width="940" height="35" fill="#0F172A"/>
+      <text x="100" y="108" text-anchor="middle" fill="#FBBF24" font-size="10">ATSS</text>
+      <text x="230" y="108" text-anchor="middle" fill="#EF4444" font-size="14">✗</text>
+      <text x="350" y="108" text-anchor="middle" fill="#10B981" font-size="14">✓</text>
+      <text x="470" y="108" text-anchor="middle" fill="#EF4444" font-size="14">✗</text>
+      <text x="590" y="108" text-anchor="middle" fill="#10B981" font-size="10">Fast</text>
+      <text x="710" y="108" text-anchor="middle" fill="#F59E0B" font-size="10">Medium</text>
+      <text x="850" y="108" text-anchor="middle" fill="#94A3B8" font-size="9">Anchor-based</text>
+      
+      <!-- Row 3: SimOTA -->
+      <rect x="0" y="125" width="940" height="35" fill="#1E293B"/>
+      <text x="100" y="148" text-anchor="middle" fill="#A78BFA" font-size="10">SimOTA</text>
+      <text x="230" y="148" text-anchor="middle" fill="#10B981" font-size="14">✓</text>
+      <text x="350" y="148" text-anchor="middle" fill="#10B981" font-size="14">✓</text>
+      <text x="470" y="148" text-anchor="middle" fill="#EF4444" font-size="14">✗</text>
+      <text x="590" y="148" text-anchor="middle" fill="#F59E0B" font-size="10">Medium</text>
+      <text x="710" y="148" text-anchor="middle" fill="#F59E0B" font-size="10">Medium</text>
+      <text x="850" y="148" text-anchor="middle" fill="#94A3B8" font-size="9">YOLOX</text>
+      
+      <!-- Row 4: Hungarian -->
+      <rect x="0" y="165" width="940" height="35" fill="#0F172A"/>
+      <text x="100" y="188" text-anchor="middle" fill="#60A5FA" font-size="10">Hungarian</text>
+      <text x="230" y="188" text-anchor="middle" fill="#10B981" font-size="14">✓</text>
+      <text x="350" y="188" text-anchor="middle" fill="#EF4444" font-size="10">1:1</text>
+      <text x="470" y="188" text-anchor="middle" fill="#EF4444" font-size="14">✗</text>
+      <text x="590" y="188" text-anchor="middle" fill="#EF4444" font-size="10">Slow</text>
+      <text x="710" y="188" text-anchor="middle" fill="#EF4444" font-size="10">High</text>
+      <text x="850" y="188" text-anchor="middle" fill="#94A3B8" font-size="9">DETR</text>
+      
+      <!-- Row 5: PAA -->
+      <rect x="0" y="205" width="940" height="35" fill="#1E293B"/>
+      <text x="100" y="228" text-anchor="middle" fill="#F472B6" font-size="10">PAA</text>
+      <text x="230" y="228" text-anchor="middle" fill="#10B981" font-size="14">✓</text>
+      <text x="350" y="228" text-anchor="middle" fill="#10B981" font-size="14">✓</text>
+      <text x="470" y="228" text-anchor="middle" fill="#10B981" font-size="14">✓</text>
+      <text x="590" y="228" text-anchor="middle" fill="#F59E0B" font-size="10">Medium</text>
+      <text x="710" y="228" text-anchor="middle" fill="#EF4444" font-size="10">High</text>
+      <text x="850" y="228" text-anchor="middle" fill="#94A3B8" font-size="9">Research</text>
+      
+      <!-- Row 6: TAL (highlighted) -->
+      <rect x="0" y="245" width="940" height="40" fill="#065F46" stroke="#10B981" stroke-width="2"/>
+      <text x="100" y="270" text-anchor="middle" fill="#34D399" font-size="11" font-weight="bold">TAL (YOLOv8)</text>
+      <text x="230" y="270" text-anchor="middle" fill="#10B981" font-size="16" font-weight="bold">✓</text>
+      <text x="350" y="270" text-anchor="middle" fill="#10B981" font-size="10">Fixed k</text>
+      <text x="470" y="270" text-anchor="middle" fill="#10B981" font-size="16" font-weight="bold">✓</text>
+      <text x="590" y="270" text-anchor="middle" fill="#10B981" font-size="11" font-weight="bold">Fast</text>
+      <text x="710" y="270" text-anchor="middle" fill="#10B981" font-size="11" font-weight="bold">Low</text>
+      <text x="850" y="270" text-anchor="middle" fill="#34D399" font-size="10" font-weight="bold">Production</text>
+    </g>
+  </g>
+  
+  <!-- Key Takeaways -->
+  <g transform="translate(30, 870)">
+    <rect x="0" y="0" width="940" height="200" rx="10" fill="#1E293B" stroke="#10B981" stroke-width="2"/>
+    <text x="470" y="30" text-anchor="middle" fill="#34D399" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Why Task-Aligned Assigner (TAL)?
+    </text>
+    
+    <g transform="translate(30, 55)">
+      <!-- Column 1 -->
+      <text x="0" y="0" fill="#10B981" font-size="12" font-weight="bold">1. Balanced Quality Metric</text>
+      <text x="0" y="18" fill="#94A3B8" font-size="10">• score^0.5: Prevents overconfident predictions</text>
+      <text x="0" y="34" fill="#94A3B8" font-size="10">• IoU^6: Only well-localized boxes survive</text>
+      <text x="0" y="50" fill="#94A3B8" font-size="10">• Automatic balance during training</text>
+      
+      <!-- Column 2 -->
+      <g transform="translate(300, 0)">
+        <text x="0" y="0" fill="#10B981" font-size="12" font-weight="bold">2. Simple and Fast</text>
+        <text x="0" y="18" fill="#94A3B8" font-size="10">• No GMM fitting (vs PAA)</text>
+        <text x="0" y="34" fill="#94A3B8" font-size="10">• No optimal transport (vs OTA)</text>
+        <text x="0" y="50" fill="#94A3B8" font-size="10">• Fixed k=10 works universally</text>
+      </g>
+      
+      <!-- Column 3 -->
+      <g transform="translate(600, 0)">
+        <text x="0" y="0" fill="#10B981" font-size="12" font-weight="bold">3. Soft Labels</text>
+        <text x="0" y="18" fill="#94A3B8" font-size="10">• Quality-weighted supervision</text>
+        <text x="0" y="34" fill="#94A3B8" font-size="10">• Better gradient signal</text>
+        <text x="0" y="50" fill="#94A3B8" font-size="10">• Reduces overfitting</text>
+      </g>
+    </g>
+    
+    <!-- Formula highlight -->
+    <g transform="translate(100, 120)">
+      <rect x="0" y="0" width="740" height="55" rx="6" fill="#0F172A" stroke="#10B981"/>
+      <text x="370" y="25" text-anchor="middle" fill="#F8FAFC" font-family="monospace" font-size="16">
+        align_metric = pred_score^0.5 × IoU^6.0
+      </text>
+      <text x="370" y="45" text-anchor="middle" fill="#64748B" font-family="Arial, sans-serif" font-size="11">
+        Simple formula, state-of-the-art results!
+      </text>
+    </g>
+  </g>
+</svg>
+

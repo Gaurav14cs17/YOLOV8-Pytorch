@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550">
+  <defs>
+    <linearGradient id="bgEMA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f23"/>
+      <stop offset="100%" style="stop-color:#1a1a3a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="550" fill="url(#bgEMA)"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#fff" font-family="Georgia, serif" font-size="24" text-anchor="middle" font-weight="bold">
+    Exponential Moving Average (EMA)
+  </text>
+  <text x="450" y="60" fill="#888" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">
+    Smoothing Model Weights for Better Generalization
+  </text>
+  
+  <!-- EMA Formula -->
+  <g transform="translate(200, 80)">
+    <rect x="0" y="0" width="500" height="80" rx="15" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="250" y="35" fill="#fff" font-family="Georgia, serif" font-size="20" text-anchor="middle">
+      EMA_t = decay * EMA_{t-1} + (1 - decay) * theta_t
+    </text>
+    <text x="250" y="60" fill="#888" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">
+      theta_t = current model weights | decay typically 0.9999
+    </text>
+  </g>
+  
+  <!-- Visual: Training weights vs EMA weights -->
+  <g transform="translate(50, 180)">
+    <rect x="0" y="0" width="800" height="180" rx="10" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+    <text x="400" y="25" fill="#fff" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Training Weights vs EMA Weights Over Time
+    </text>
+    
+    <!-- X-axis -->
+    <line x1="60" y1="140" x2="760" y2="140" stroke="#666" stroke-width="2"/>
+    <text x="400" y="165" fill="#888" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">Training Steps</text>
+    
+    <!-- Y-axis -->
+    <line x1="60" y1="40" x2="60" y2="140" stroke="#666" stroke-width="2"/>
+    <text x="30" y="95" fill="#888" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" transform="rotate(-90, 30, 95)">Weight Value</text>
+    
+    <!-- Training weights (noisy) -->
+    <path d="M60,90 L100,70 L140,100 L180,65 L220,95 L260,55 L300,85 L340,60 L380,90 L420,50 L460,75 L500,45 L540,70 L580,40 L620,65 L660,35 L700,55 L740,30" 
+          stroke="#ff6b6b" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+    
+    <!-- EMA weights (smooth) -->
+    <path d="M60,90 L100,85 L140,82 L180,78 L220,75 L260,70 L300,67 L340,63 L380,60 L420,56 L460,53 L500,50 L540,47 L580,44 L620,42 L660,40 L700,38 L740,36" 
+          stroke="#4ecdc4" stroke-width="3" fill="none"/>
+    
+    <!-- Legend -->
+    <line x1="500" y1="50" x2="540" y2="50" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="550" y="54" fill="#ff6b6b" font-family="Consolas, monospace" font-size="10">Training weights</text>
+    
+    <line x1="650" y1="50" x2="690" y2="50" stroke="#4ecdc4" stroke-width="3"/>
+    <text x="700" y="54" fill="#4ecdc4" font-family="Consolas, monospace" font-size="10">EMA weights</text>
+  </g>
+  
+  <!-- Decay Ramp Formula -->
+  <g transform="translate(50, 380)">
+    <rect x="0" y="0" width="400" height="150" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+    <text x="200" y="30" fill="#ffd93d" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Exponential Ramp-up Decay
+    </text>
+    
+    <text x="200" y="65" fill="#fff" font-family="Georgia, serif" font-size="16" text-anchor="middle">
+      decay(t) = d * (1 - e^{-t/tau})
+    </text>
+    
+    <text x="30" y="100" fill="#ccc" font-family="Consolas, monospace" font-size="11">d = 0.9999   # base decay</text>
+    <text x="30" y="120" fill="#ccc" font-family="Consolas, monospace" font-size="11">tau = 2000   # ramp time constant</text>
+    <text x="30" y="140" fill="#888" font-family="Arial, sans-serif" font-size="10">Early epochs: lower decay for faster adaptation</text>
+  </g>
+  
+  <!-- Key Benefits -->
+  <g transform="translate(480, 380)">
+    <rect x="0" y="0" width="370" height="150" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="185" y="30" fill="#4ecdc4" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Why Use EMA?
+    </text>
+    
+    <text x="20" y="60" fill="#4ecdc4" font-family="Arial, sans-serif" font-size="12">1. Smoother Weights</text>
+    <text x="40" y="78" fill="#888" font-family="Arial, sans-serif" font-size="10">Reduces noise from mini-batch gradients</text>
+    
+    <text x="20" y="100" fill="#4ecdc4" font-family="Arial, sans-serif" font-size="12">2. Better Generalization</text>
+    <text x="40" y="118" fill="#888" font-family="Arial, sans-serif" font-size="10">Averaged weights often generalize better</text>
+    
+    <text x="20" y="140" fill="#4ecdc4" font-family="Arial, sans-serif" font-size="12">3. Stable Inference</text>
+    <text x="40" y="155" fill="#888" font-family="Arial, sans-serif" font-size="10">Use EMA model for final predictions</text>
+  </g>
+</svg>
+

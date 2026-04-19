@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 900">
+  <!-- Background -->
+  <rect width="950" height="900" fill="#0F172A"/>
+  
+  <!-- Title -->
+  <text x="475" y="40" text-anchor="middle" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+    Problems in Object Detection Assignment
+  </text>
+  <text x="475" y="65" text-anchor="middle" fill="#94A3B8" font-family="Arial, sans-serif" font-size="14">
+    Why we need Task-Aligned Assigner
+  </text>
+  
+  <!-- Problem 1: Ambiguous Assignments -->
+  <g transform="translate(30, 100)">
+    <rect x="0" y="0" width="430" height="230" rx="10" fill="#1E293B" stroke="#EF4444" stroke-width="2"/>
+    <text x="215" y="30" text-anchor="middle" fill="#F87171" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Problem 1: Ambiguous Anchor Assignment
+    </text>
+    
+    <!-- Visual -->
+    <g transform="translate(30, 50)">
+      <!-- Grid -->
+      <rect x="0" y="0" width="150" height="150" fill="#0F172A" stroke="#334155"/>
+      <g stroke="#334155" stroke-width="0.5">
+        <line x1="50" y1="0" x2="50" y2="150"/>
+        <line x1="100" y1="0" x2="100" y2="150"/>
+        <line x1="0" y1="50" x2="150" y2="50"/>
+        <line x1="0" y1="100" x2="150" y2="100"/>
+      </g>
+      
+      <!-- Two overlapping GT boxes -->
+      <rect x="20" y="30" width="80" height="60" fill="none" stroke="#EF4444" stroke-width="2"/>
+      <text x="60" y="25" text-anchor="middle" fill="#EF4444" font-size="10">GT₀ (car)</text>
+      
+      <rect x="50" y="50" width="90" height="70" fill="none" stroke="#10B981" stroke-width="2"/>
+      <text x="95" y="130" text-anchor="middle" fill="#10B981" font-size="10">GT₁ (truck)</text>
+      
+      <!-- Confused anchor -->
+      <circle cx="75" cy="75" r="8" fill="#F59E0B"/>
+      <text x="75" y="79" text-anchor="middle" fill="#0F172A" font-size="8" font-weight="bold">?</text>
+    </g>
+    
+    <!-- Explanation -->
+    <g transform="translate(200, 55)">
+      <text x="0" y="0" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="12" font-weight="bold">The Problem:</text>
+      <text x="0" y="20" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• Anchor falls inside 2 GT boxes</text>
+      <text x="0" y="38" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• IoU-only assignment is ambiguous</text>
+      <text x="0" y="56" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• Which class should it predict?</text>
+      
+      <text x="0" y="85" fill="#10B981" font-family="Arial, sans-serif" font-size="12" font-weight="bold">TAL Solution:</text>
+      <text x="0" y="105" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• Uses alignment metric (score × IoU)</text>
+      <text x="0" y="123" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• Resolves by max overlap</text>
+      <text x="0" y="141" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• One anchor = One GT only</text>
+    </g>
+  </g>
+  
+  <!-- Problem 2: Scale Mismatch -->
+  <g transform="translate(490, 100)">
+    <rect x="0" y="0" width="430" height="230" rx="10" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+    <text x="215" y="30" text-anchor="middle" fill="#FBBF24" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Problem 2: Object Scale Mismatch
+    </text>
+    
+    <!-- Visual -->
+    <g transform="translate(30, 50)">
+      <!-- Large object on small grid -->
+      <rect x="0" y="0" width="80" height="80" fill="#0F172A" stroke="#334155"/>
+      <text x="40" y="-5" text-anchor="middle" fill="#64748B" font-size="9">8×8 grid (P3)</text>
+      <g stroke="#334155" stroke-width="0.5">
+        <line x1="10" y1="0" x2="10" y2="80"/>
+        <line x1="20" y1="0" x2="20" y2="80"/>
+        <line x1="30" y1="0" x2="30" y2="80"/>
+        <line x1="40" y1="0" x2="40" y2="80"/>
+        <line x1="50" y1="0" x2="50" y2="80"/>
+        <line x1="60" y1="0" x2="60" y2="80"/>
+        <line x1="70" y1="0" x2="70" y2="80"/>
+        <line x1="0" y1="10" x2="80" y2="10"/>
+        <line x1="0" y1="20" x2="80" y2="20"/>
+        <line x1="0" y1="30" x2="80" y2="30"/>
+        <line x1="0" y1="40" x2="80" y2="40"/>
+        <line x1="0" y1="50" x2="80" y2="50"/>
+        <line x1="0" y1="60" x2="80" y2="60"/>
+        <line x1="0" y1="70" x2="80" y2="70"/>
+      </g>
+      
+      <!-- Large GT -->
+      <rect x="5" y="5" width="70" height="70" fill="none" stroke="#3B82F6" stroke-width="2"/>
+      <text x="40" y="95" text-anchor="middle" fill="#3B82F6" font-size="9">Large object</text>
+      <text x="40" y="107" text-anchor="middle" fill="#EF4444" font-size="8">64 anchors inside!</text>
+      
+      <!-- Small object on large grid -->
+      <g transform="translate(100, 0)">
+        <rect x="0" y="0" width="80" height="80" fill="#0F172A" stroke="#334155"/>
+        <text x="40" y="-5" text-anchor="middle" fill="#64748B" font-size="9">20×20 grid (P5)</text>
+        <g stroke="#334155" stroke-width="0.5">
+          <line x1="20" y1="0" x2="20" y2="80"/>
+          <line x1="40" y1="0" x2="40" y2="80"/>
+          <line x1="60" y1="0" x2="60" y2="80"/>
+          <line x1="0" y1="20" x2="80" y2="20"/>
+          <line x1="0" y1="40" x2="80" y2="40"/>
+          <line x1="0" y1="60" x2="80" y2="60"/>
+        </g>
+        
+        <!-- Tiny GT -->
+        <rect x="25" y="25" width="15" height="15" fill="none" stroke="#EC4899" stroke-width="2"/>
+        <text x="40" y="95" text-anchor="middle" fill="#EC4899" font-size="9">Small object</text>
+        <text x="40" y="107" text-anchor="middle" fill="#EF4444" font-size="8">0-1 anchors!</text>
+      </g>
+    </g>
+    
+    <!-- Explanation -->
+    <g transform="translate(30, 170)">
+      <text x="0" y="0" fill="#10B981" font-family="Arial, sans-serif" font-size="11" font-weight="bold">TAL Solution:</text>
+      <text x="0" y="18" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="10">• Multi-scale features (P3, P4, P5)</text>
+      <text x="0" y="34" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="10">• Top-k per GT ensures minimum positives</text>
+      <text x="0" y="50" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="10">• k=10 works across all scales</text>
+    </g>
+  </g>
+  
+  <!-- Problem 3: Quality Mismatch -->
+  <g transform="translate(30, 360)">
+    <rect x="0" y="0" width="430" height="230" rx="10" fill="#1E293B" stroke="#8B5CF6" stroke-width="2"/>
+    <text x="215" y="30" text-anchor="middle" fill="#A78BFA" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Problem 3: Classification-Localization Mismatch
+    </text>
+    
+    <!-- Visual: Bar charts -->
+    <g transform="translate(30, 60)">
+      <!-- Anchor A -->
+      <text x="50" y="0" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Anchor A</text>
+      <text x="20" y="25" fill="#64748B" font-size="9">Score:</text>
+      <rect x="50" y="15" width="90" height="15" rx="2" fill="#10B981"/><text x="145" y="26" fill="#6EE7B7" font-size="9">0.9</text>
+      <text x="20" y="50" fill="#64748B" font-size="9">IoU:</text>
+      <rect x="50" y="40" width="30" height="15" rx="2" fill="#3B82F6"/><text x="85" y="51" fill="#93C5FD" font-size="9">0.3</text>
+      <text x="50" y="75" fill="#F59E0B" font-size="10">High conf, bad box!</text>
+      
+      <!-- Anchor B -->
+      <g transform="translate(180, 0)">
+        <text x="50" y="0" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="bold">Anchor B</text>
+        <text x="20" y="25" fill="#64748B" font-size="9">Score:</text>
+        <rect x="50" y="15" width="50" height="15" rx="2" fill="#10B981"/><text x="105" y="26" fill="#6EE7B7" font-size="9">0.5</text>
+        <text x="20" y="50" fill="#64748B" font-size="9">IoU:</text>
+        <rect x="50" y="40" width="85" height="15" rx="2" fill="#3B82F6"/><text x="140" y="51" fill="#93C5FD" font-size="9">0.85</text>
+        <text x="50" y="75" fill="#10B981" font-size="10">Good box!</text>
+      </g>
+    </g>
+    
+    <!-- Explanation -->
+    <g transform="translate(30, 155)">
+      <text x="0" y="0" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="12" font-weight="bold">The Problem:</text>
+      <text x="0" y="18" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• Using only score: picks A (bad localization)</text>
+      <text x="0" y="36" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• Using only IoU: ignores classification quality</text>
+      
+      <text x="220" y="0" fill="#10B981" font-family="Arial, sans-serif" font-size="12" font-weight="bold">TAL Solution:</text>
+      <text x="220" y="18" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• score^0.5 × IoU^6 = 0.95×0.0007 vs 0.71×0.38</text>
+      <text x="220" y="36" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• Anchor B wins! (0.27 >> 0.0007)</text>
+      <text x="220" y="54" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• β=6 strongly penalizes bad IoU</text>
+    </g>
+  </g>
+  
+  <!-- Problem 4: Training Instability -->
+  <g transform="translate(490, 360)">
+    <rect x="0" y="0" width="430" height="230" rx="10" fill="#1E293B" stroke="#EC4899" stroke-width="2"/>
+    <text x="215" y="30" text-anchor="middle" fill="#F472B6" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Problem 4: Positive/Negative Imbalance
+    </text>
+    
+    <!-- Visual: Pie chart style -->
+    <g transform="translate(50, 60)">
+      <rect x="0" y="0" width="120" height="30" rx="4" fill="#EF4444"/>
+      <text x="60" y="20" text-anchor="middle" fill="white" font-size="11" font-weight="bold">8382 Negative</text>
+      
+      <rect x="0" y="35" width="8" height="30" rx="4" fill="#10B981"/>
+      <text x="50" y="55" fill="#6EE7B7" font-size="11">18 Positive (0.2%)</text>
+      
+      <text x="0" y="90" fill="#94A3B8" font-size="10">Total: 8400 anchors</text>
+      <text x="0" y="105" fill="#94A3B8" font-size="10">With 2 GT boxes</text>
+    </g>
+    
+    <!-- Explanation -->
+    <g transform="translate(200, 60)">
+      <text x="0" y="0" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="12" font-weight="bold">The Problem:</text>
+      <text x="0" y="18" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• Extreme class imbalance</text>
+      <text x="0" y="36" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• Most anchors are background</text>
+      <text x="0" y="54" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">• Gradient dominated by negatives</text>
+      
+      <text x="0" y="85" fill="#10B981" font-family="Arial, sans-serif" font-size="12" font-weight="bold">TAL Solution:</text>
+      <text x="0" y="103" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• Soft labels weighted by quality</text>
+      <text x="0" y="121" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• BCE loss with target scores</text>
+      <text x="0" y="139" fill="#6EE7B7" font-family="Arial, sans-serif" font-size="11">• Normalized by alignment metric</text>
+    </g>
+  </g>
+  
+  <!-- Problem 5: Dynamic vs Static -->
+  <g transform="translate(30, 620)">
+    <rect x="0" y="0" width="890" height="250" rx="10" fill="#1E293B" stroke="#06B6D4" stroke-width="2"/>
+    <text x="445" y="30" text-anchor="middle" fill="#22D3EE" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      Problem 5: Static vs Dynamic Assignment
+    </text>
+    
+    <!-- Static assignment -->
+    <g transform="translate(30, 60)">
+      <rect x="0" y="0" width="200" height="160" rx="6" fill="#0F172A" stroke="#EF4444"/>
+      <text x="100" y="20" text-anchor="middle" fill="#F87171" font-size="12" font-weight="bold">Static (IoU-based)</text>
+      
+      <text x="10" y="45" fill="#94A3B8" font-size="10">• Fixed IoU threshold (e.g., 0.5)</text>
+      <text x="10" y="62" fill="#94A3B8" font-size="10">• Same rule for all objects</text>
+      <text x="10" y="79" fill="#94A3B8" font-size="10">• Ignores prediction quality</text>
+      <text x="10" y="96" fill="#94A3B8" font-size="10">• Can't adapt during training</text>
+      
+      <text x="10" y="125" fill="#EF4444" font-size="10" font-weight="bold">Issues:</text>
+      <text x="10" y="142" fill="#FCA5A5" font-size="9">• Too strict for hard objects</text>
+      <text x="10" y="156" fill="#FCA5A5" font-size="9">• Too loose for easy objects</text>
+    </g>
+    
+    <!-- Arrow -->
+    <g transform="translate(250, 120)">
+      <path d="M 0,0 L 60,0" stroke="#64748B" stroke-width="2" marker-end="url(#arrowGray)"/>
+      <defs>
+        <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#64748B"/>
+        </marker>
+      </defs>
+      <text x="30" y="20" text-anchor="middle" fill="#64748B" font-size="10">vs</text>
+    </g>
+    
+    <!-- Dynamic assignment (TAL) -->
+    <g transform="translate(330, 60)">
+      <rect x="0" y="0" width="230" height="160" rx="6" fill="#0F172A" stroke="#10B981"/>
+      <text x="115" y="20" text-anchor="middle" fill="#34D399" font-size="12" font-weight="bold">Dynamic (Task-Aligned)</text>
+      
+      <text x="10" y="45" fill="#6EE7B7" font-size="10">• Uses prediction quality (scores)</text>
+      <text x="10" y="62" fill="#6EE7B7" font-size="10">• Adapts to each object's difficulty</text>
+      <text x="10" y="79" fill="#6EE7B7" font-size="10">• Combines cls + loc quality</text>
+      <text x="10" y="96" fill="#6EE7B7" font-size="10">• Top-k ensures minimum matches</text>
+      
+      <text x="10" y="125" fill="#10B981" font-size="10" font-weight="bold">Benefits:</text>
+      <text x="10" y="142" fill="#A7F3D0" font-size="9">• Better for varying difficulties</text>
+      <text x="10" y="156" fill="#A7F3D0" font-size="9">• Self-adjusting during training</text>
+    </g>
+    
+    <!-- Training progression -->
+    <g transform="translate(590, 60)">
+      <rect x="0" y="0" width="270" height="160" rx="6" fill="#0F172A" stroke="#8B5CF6"/>
+      <text x="135" y="20" text-anchor="middle" fill="#A78BFA" font-size="12" font-weight="bold">Training Progression</text>
+      
+      <!-- Early training -->
+      <text x="10" y="45" fill="#64748B" font-size="10">Early (epoch 1-10):</text>
+      <text x="10" y="60" fill="#94A3B8" font-size="9">• Scores random: IoU dominates</text>
+      <text x="10" y="75" fill="#94A3B8" font-size="9">• Focus on localization learning</text>
+      
+      <!-- Late training -->
+      <text x="10" y="100" fill="#64748B" font-size="10">Late (epoch 100+):</text>
+      <text x="10" y="115" fill="#94A3B8" font-size="9">• Scores meaningful: both matter</text>
+      <text x="10" y="130" fill="#94A3B8" font-size="9">• Quality-aware assignment</text>
+      
+      <text x="10" y="155" fill="#A78BFA" font-size="9">= Automatic curriculum learning!</text>
+    </g>
+  </g>
+</svg>
+

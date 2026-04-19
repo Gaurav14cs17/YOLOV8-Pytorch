@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 800">
+  <!-- Background -->
+  <rect width="950" height="800" fill="#0F172A"/>
+  
+  <!-- Title -->
+  <text x="475" y="35" text-anchor="middle" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="22" font-weight="bold">
+    Line 64: Building Batch Index Tensor for Advanced Indexing
+  </text>
+  
+  <!-- Code Box -->
+  <g transform="translate(50, 60)">
+    <rect x="0" y="0" width="850" height="60" rx="8" fill="#1E293B" stroke="#8B5CF6" stroke-width="2"/>
+    <text x="20" y="25" fill="#64748B" font-family="monospace" font-size="12">Line 64:</text>
+    <text x="20" y="45" fill="#F8FAFC" font-family="monospace" font-size="14">i[0] = torch.arange(end=self.bs).view(-1, 1).repeat(1, self.num_max_boxes)</text>
+  </g>
+  
+  <!-- Context Box -->
+  <g transform="translate(50, 140)">
+    <rect x="0" y="0" width="850" height="50" rx="6" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="20" y="20" fill="#F59E0B" font-family="Arial, sans-serif" font-size="12" font-weight="bold">Context:</text>
+    <text x="20" y="38" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">Creating index tensor to access pred_scores[batch_idx, :, class_idx] for alignment metric calculation</text>
+  </g>
+  
+  <!-- Step 1: torch.arange -->
+  <g transform="translate(50, 210)">
+    <text x="0" y="0" fill="#10B981" font-family="Arial, sans-serif" font-size="16" font-weight="bold">Step 1: torch.arange(end=self.bs)</text>
+    <text x="0" y="20" fill="#64748B" font-family="monospace" font-size="11">Example: self.bs = 4 (batch size)</text>
+    
+    <rect x="0" y="35" width="400" height="80" rx="8" fill="#1E293B" stroke="#10B981" stroke-width="2"/>
+    
+    <!-- Array visualization -->
+    <g transform="translate(20, 55)">
+      <text x="0" y="0" fill="#94A3B8" font-family="monospace" font-size="11">Result: 1D tensor, shape [4]</text>
+      <g transform="translate(0, 15)">
+        <rect x="0" y="0" width="50" height="35" rx="4" fill="#065F46"/><text x="25" y="23" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="14" font-weight="bold">0</text>
+        <rect x="55" y="0" width="50" height="35" rx="4" fill="#065F46"/><text x="80" y="23" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="14" font-weight="bold">1</text>
+        <rect x="110" y="0" width="50" height="35" rx="4" fill="#065F46"/><text x="135" y="23" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="14" font-weight="bold">2</text>
+        <rect x="165" y="0" width="50" height="35" rx="4" fill="#065F46"/><text x="190" y="23" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="14" font-weight="bold">3</text>
+      </g>
+    </g>
+    
+    <!-- Arrow to next step -->
+    <path d="M 420,75 L 480,75" stroke="#60A5FA" stroke-width="2" marker-end="url(#arrow3)"/>
+    <defs>
+      <marker id="arrow3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#60A5FA"/>
+      </marker>
+    </defs>
+    
+    <!-- Step 1 code -->
+    <g transform="translate(500, 35)">
+      <rect x="0" y="0" width="350" height="80" rx="6" fill="#1F2937" stroke="#334155"/>
+      <text x="15" y="25" fill="#7C3AED" font-family="monospace" font-size="11">torch.arange(end=4)</text>
+      <text x="15" y="50" fill="#64748B" font-family="monospace" font-size="10"># Returns: tensor([0, 1, 2, 3])</text>
+      <text x="15" y="70" fill="#64748B" font-family="monospace" font-size="10"># Shape: [4] = batch indices</text>
+    </g>
+  </g>
+  
+  <!-- Step 2: .view(-1, 1) -->
+  <g transform="translate(50, 340)">
+    <text x="0" y="0" fill="#3B82F6" font-family="Arial, sans-serif" font-size="16" font-weight="bold">Step 2: .view(-1, 1)</text>
+    <text x="0" y="20" fill="#64748B" font-family="monospace" font-size="11">Reshape to column vector [4] to [4, 1]</text>
+    
+    <rect x="0" y="35" width="200" height="140" rx="8" fill="#1E293B" stroke="#3B82F6" stroke-width="2"/>
+    
+    <!-- Column vector visualization -->
+    <g transform="translate(20, 55)">
+      <text x="0" y="0" fill="#94A3B8" font-family="monospace" font-size="11">Shape [4, 1]</text>
+      <g transform="translate(30, 15)">
+        <rect x="0" y="0" width="50" height="25" rx="4" fill="#1E3A8A"/><text x="25" y="18" text-anchor="middle" fill="#93C5FD" font-family="monospace" font-size="12" font-weight="bold">0</text>
+        <rect x="0" y="28" width="50" height="25" rx="4" fill="#1E3A8A"/><text x="25" y="46" text-anchor="middle" fill="#93C5FD" font-family="monospace" font-size="12" font-weight="bold">1</text>
+        <rect x="0" y="56" width="50" height="25" rx="4" fill="#1E3A8A"/><text x="25" y="74" text-anchor="middle" fill="#93C5FD" font-family="monospace" font-size="12" font-weight="bold">2</text>
+        <rect x="0" y="84" width="50" height="25" rx="4" fill="#1E3A8A"/><text x="25" y="102" text-anchor="middle" fill="#93C5FD" font-family="monospace" font-size="12" font-weight="bold">3</text>
+      </g>
+    </g>
+    
+    <!-- Arrow to next step -->
+    <path d="M 220,105 L 280,105" stroke="#60A5FA" stroke-width="2" marker-end="url(#arrow3)"/>
+    
+    <!-- Step 2 explanation -->
+    <g transform="translate(300, 35)">
+      <rect x="0" y="0" width="550" height="140" rx="6" fill="#1F2937" stroke="#334155"/>
+      <text x="15" y="25" fill="#3B82F6" font-family="monospace" font-size="11">.view(-1, 1)</text>
+      <text x="15" y="50" fill="#64748B" font-family="monospace" font-size="10"># -1 means "infer this dimension"</text>
+      <text x="15" y="70" fill="#64748B" font-family="monospace" font-size="10"># [4] to [4, 1] (column vector)</text>
+      
+      <text x="15" y="100" fill="#F59E0B" font-family="Arial, sans-serif" font-size="10" font-weight="bold">Why column vector?</text>
+      <text x="15" y="120" fill="#94A3B8" font-family="Arial, sans-serif" font-size="10">Prepares for broadcasting when we repeat along columns</text>
+    </g>
+  </g>
+  
+  <!-- Step 3: .repeat(1, self.num_max_boxes) -->
+  <g transform="translate(50, 510)">
+    <text x="0" y="0" fill="#EC4899" font-family="Arial, sans-serif" font-size="16" font-weight="bold">Step 3: .repeat(1, self.num_max_boxes)</text>
+    <text x="0" y="20" fill="#64748B" font-family="monospace" font-size="11">Example: self.num_max_boxes = 5 (max GT boxes in batch)</text>
+    
+    <rect x="0" y="35" width="500" height="170" rx="8" fill="#1E293B" stroke="#EC4899" stroke-width="2"/>
+    
+    <!-- Matrix visualization -->
+    <g transform="translate(20, 55)">
+      <text x="0" y="0" fill="#94A3B8" font-family="monospace" font-size="11">Result: Shape [4, 5] = [batch_size, num_max_boxes]</text>
+      
+      <!-- Column headers -->
+      <text x="60" y="25" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">GT₀</text>
+      <text x="105" y="25" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">GT₁</text>
+      <text x="150" y="25" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">GT₂</text>
+      <text x="195" y="25" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">GT₃</text>
+      <text x="240" y="25" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="9">GT₄</text>
+      
+      <!-- Row labels -->
+      <text x="20" y="50" text-anchor="end" fill="#64748B" font-family="monospace" font-size="9">B₀</text>
+      <text x="20" y="75" text-anchor="end" fill="#64748B" font-family="monospace" font-size="9">B₁</text>
+      <text x="20" y="100" text-anchor="end" fill="#64748B" font-family="monospace" font-size="9">B₂</text>
+      <text x="20" y="125" text-anchor="end" fill="#64748B" font-family="monospace" font-size="9">B₃</text>
+      
+      <!-- Matrix cells -->
+      <g transform="translate(35, 35)">
+        <!-- Row 0: all 0s -->
+        <rect x="0" y="0" width="40" height="22" rx="3" fill="#831843"/><text x="20" y="16" text-anchor="middle" fill="#FDF2F8" font-family="monospace" font-size="11" font-weight="bold">0</text>
+        <rect x="45" y="0" width="40" height="22" rx="3" fill="#831843"/><text x="65" y="16" text-anchor="middle" fill="#FDF2F8" font-family="monospace" font-size="11" font-weight="bold">0</text>
+        <rect x="90" y="0" width="40" height="22" rx="3" fill="#831843"/><text x="110" y="16" text-anchor="middle" fill="#FDF2F8" font-family="monospace" font-size="11" font-weight="bold">0</text>
+        <rect x="135" y="0" width="40" height="22" rx="3" fill="#831843"/><text x="155" y="16" text-anchor="middle" fill="#FDF2F8" font-family="monospace" font-size="11" font-weight="bold">0</text>
+        <rect x="180" y="0" width="40" height="22" rx="3" fill="#831843"/><text x="200" y="16" text-anchor="middle" fill="#FDF2F8" font-family="monospace" font-size="11" font-weight="bold">0</text>
+        
+        <!-- Row 1: all 1s -->
+        <rect x="0" y="25" width="40" height="22" rx="3" fill="#701A75"/><text x="20" y="41" text-anchor="middle" fill="#FAE8FF" font-family="monospace" font-size="11" font-weight="bold">1</text>
+        <rect x="45" y="25" width="40" height="22" rx="3" fill="#701A75"/><text x="65" y="41" text-anchor="middle" fill="#FAE8FF" font-family="monospace" font-size="11" font-weight="bold">1</text>
+        <rect x="90" y="25" width="40" height="22" rx="3" fill="#701A75"/><text x="110" y="41" text-anchor="middle" fill="#FAE8FF" font-family="monospace" font-size="11" font-weight="bold">1</text>
+        <rect x="135" y="25" width="40" height="22" rx="3" fill="#701A75"/><text x="155" y="41" text-anchor="middle" fill="#FAE8FF" font-family="monospace" font-size="11" font-weight="bold">1</text>
+        <rect x="180" y="25" width="40" height="22" rx="3" fill="#701A75"/><text x="200" y="41" text-anchor="middle" fill="#FAE8FF" font-family="monospace" font-size="11" font-weight="bold">1</text>
+        
+        <!-- Row 2: all 2s -->
+        <rect x="0" y="50" width="40" height="22" rx="3" fill="#581C87"/><text x="20" y="66" text-anchor="middle" fill="#F3E8FF" font-family="monospace" font-size="11" font-weight="bold">2</text>
+        <rect x="45" y="50" width="40" height="22" rx="3" fill="#581C87"/><text x="65" y="66" text-anchor="middle" fill="#F3E8FF" font-family="monospace" font-size="11" font-weight="bold">2</text>
+        <rect x="90" y="50" width="40" height="22" rx="3" fill="#581C87"/><text x="110" y="66" text-anchor="middle" fill="#F3E8FF" font-family="monospace" font-size="11" font-weight="bold">2</text>
+        <rect x="135" y="50" width="40" height="22" rx="3" fill="#581C87"/><text x="155" y="66" text-anchor="middle" fill="#F3E8FF" font-family="monospace" font-size="11" font-weight="bold">2</text>
+        <rect x="180" y="50" width="40" height="22" rx="3" fill="#581C87"/><text x="200" y="66" text-anchor="middle" fill="#F3E8FF" font-family="monospace" font-size="11" font-weight="bold">2</text>
+        
+        <!-- Row 3: all 3s -->
+        <rect x="0" y="75" width="40" height="22" rx="3" fill="#4C1D95"/><text x="20" y="91" text-anchor="middle" fill="#EDE9FE" font-family="monospace" font-size="11" font-weight="bold">3</text>
+        <rect x="45" y="75" width="40" height="22" rx="3" fill="#4C1D95"/><text x="65" y="91" text-anchor="middle" fill="#EDE9FE" font-family="monospace" font-size="11" font-weight="bold">3</text>
+        <rect x="90" y="75" width="40" height="22" rx="3" fill="#4C1D95"/><text x="110" y="91" text-anchor="middle" fill="#EDE9FE" font-family="monospace" font-size="11" font-weight="bold">3</text>
+        <rect x="135" y="75" width="40" height="22" rx="3" fill="#4C1D95"/><text x="155" y="91" text-anchor="middle" fill="#EDE9FE" font-family="monospace" font-size="11" font-weight="bold">3</text>
+        <rect x="180" y="75" width="40" height="22" rx="3" fill="#4C1D95"/><text x="200" y="91" text-anchor="middle" fill="#EDE9FE" font-family="monospace" font-size="11" font-weight="bold">3</text>
+      </g>
+    </g>
+    
+    <!-- Usage explanation -->
+    <g transform="translate(520, 35)">
+      <rect x="0" y="0" width="330" height="170" rx="6" fill="#1F2937" stroke="#334155"/>
+      <text x="15" y="25" fill="#EC4899" font-family="Arial, sans-serif" font-size="12" font-weight="bold">Purpose of i[0]:</text>
+      
+      <text x="15" y="50" fill="#94A3B8" font-family="Arial, sans-serif" font-size="10">Each row = batch index repeated</text>
+      <text x="15" y="70" fill="#94A3B8" font-family="Arial, sans-serif" font-size="10">Each column = one GT box slot</text>
+      
+      <text x="15" y="100" fill="#F59E0B" font-family="Arial, sans-serif" font-size="11" font-weight="bold">Used for indexing:</text>
+      <text x="15" y="120" fill="#6EE7B7" font-family="monospace" font-size="10">pred_scores[i[0], :, i[1]]</text>
+      <text x="15" y="140" fill="#64748B" font-family="monospace" font-size="9">i[0] = which batch</text>
+      <text x="15" y="155" fill="#64748B" font-family="monospace" font-size="9">i[1] = which class (from GT labels)</text>
+    </g>
+  </g>
+  
+  <!-- Final Summary -->
+  <g transform="translate(50, 710)">
+    <rect x="0" y="0" width="850" height="70" rx="8" fill="#1E293B" stroke="#10B981" stroke-width="2"/>
+    <text x="20" y="25" fill="#34D399" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Summary:</text>
+    <text x="20" y="50" fill="#94A3B8" font-family="Arial, sans-serif" font-size="11">i[0] maps every (batch, GT) pair to its batch index. Used to extract pred_scores for the correct batch when computing alignment metrics.</text>
+  </g>
+</svg>
+

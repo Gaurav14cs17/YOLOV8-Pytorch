@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 550">
+  <defs>
+    <linearGradient id="bgAP" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="550" fill="url(#bgAP)"/>
+  
+  <!-- Title -->
+  <text x="500" y="35" fill="#fff" font-family="Georgia, serif" font-size="24" text-anchor="middle" font-weight="bold">
+    compute_ap() - Average Precision Computation Pipeline
+  </text>
+  
+  <!-- Step 1: Sort by Confidence -->
+  <g transform="translate(50, 70)">
+    <rect x="0" y="0" width="280" height="120" rx="10" fill="#252547" stroke="#ff6b6b" stroke-width="2"/>
+    <text x="140" y="25" fill="#ff6b6b" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      Step 1: Sort by Confidence
+    </text>
+    
+    <text x="20" y="55" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      i = argsort(-conf)
+    </text>
+    <text x="20" y="75" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      tp, conf, pred_cls = sort(i)
+    </text>
+    
+    <text x="20" y="105" fill="#888" font-family="Arial, sans-serif" font-size="9">
+      Highest confidence predictions first
+    </text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M340,130 L370,130" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Step 2: Per-class Processing -->
+  <g transform="translate(380, 70)">
+    <rect x="0" y="0" width="280" height="120" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="140" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      Step 2: Per-Class Loop
+    </text>
+    
+    <text x="20" y="55" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      for c in unique_classes:
+    </text>
+    <text x="30" y="75" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      i = pred_cls == c
+    </text>
+    <text x="30" y="95" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      fpc = (1 - tp[i]).cumsum()
+    </text>
+    <text x="30" y="115" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      tpc = tp[i].cumsum()
+    </text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M670,130 L700,130" stroke="#666" stroke-width="2"/>
+  
+  <!-- Step 3: Precision/Recall -->
+  <g transform="translate(710, 70)">
+    <rect x="0" y="0" width="250" height="120" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+    <text x="125" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+      Step 3: P/R Curves
+    </text>
+    
+    <text x="20" y="55" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      recall = tpc / nl
+    </text>
+    <text x="20" y="75" fill="#ccc" font-family="Consolas, monospace" font-size="10">
+      precision = tpc / (tpc + fpc)
+    </text>
+    
+    <text x="20" y="105" fill="#888" font-family="Arial, sans-serif" font-size="9">
+      nl = number of labels
+    </text>
+  </g>
+  
+  <!-- Step 4: AP Calculation -->
+  <g transform="translate(50, 220)">
+    <rect x="0" y="0" width="900" height="150" rx="10" fill="#1a1a2e" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="450" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Step 4: Compute AP (101-point Interpolation - COCO Style)
+    </text>
+    
+    <!-- Sub-steps -->
+    <g transform="translate(30, 45)">
+      <rect x="0" y="0" width="250" height="90" rx="8" fill="#252547"/>
+      <text x="125" y="20" fill="#ff6b6b" font-family="Consolas, monospace" font-size="11" text-anchor="middle">4a. Extend curves</text>
+      <text x="10" y="45" fill="#ccc" font-family="Consolas, monospace" font-size="9">
+        m_rec = [0, recall..., 1]
+      </text>
+      <text x="10" y="65" fill="#ccc" font-family="Consolas, monospace" font-size="9">
+        m_pre = [1, precision..., 0]
+      </text>
+      <text x="10" y="85" fill="#888" font-family="Arial, sans-serif" font-size="8">
+        Add boundary points
+      </text>
+    </g>
+    
+    <g transform="translate(320, 45)">
+      <rect x="0" y="0" width="250" height="90" rx="8" fill="#252547"/>
+      <text x="125" y="20" fill="#4ecdc4" font-family="Consolas, monospace" font-size="11" text-anchor="middle">4b. Precision Envelope</text>
+      <text x="10" y="45" fill="#ccc" font-family="Consolas, monospace" font-size="9">
+        m_pre = flip(
+      </text>
+      <text x="10" y="65" fill="#ccc" font-family="Consolas, monospace" font-size="9">
+          max.accumulate(flip(m_pre)))
+      </text>
+      <text x="10" y="85" fill="#888" font-family="Arial, sans-serif" font-size="8">
+        Monotonically decreasing
+      </text>
+    </g>
+    
+    <g transform="translate(610, 45)">
+      <rect x="0" y="0" width="260" height="90" rx="8" fill="#252547"/>
+      <text x="130" y="20" fill="#ffd93d" font-family="Consolas, monospace" font-size="11" text-anchor="middle">4c. Integrate</text>
+      <text x="10" y="45" fill="#ccc" font-family="Consolas, monospace" font-size="9">
+        x = linspace(0, 1, 101)
+      </text>
+      <text x="10" y="65" fill="#ccc" font-family="Consolas, monospace" font-size="9">
+        ap = trapz(interp(x, m_rec, m_pre))
+      </text>
+      <text x="10" y="85" fill="#888" font-family="Arial, sans-serif" font-size="8">
+        101-point integration
+      </text>
+    </g>
+  </g>
+  
+  <!-- Output -->
+  <g transform="translate(50, 400)">
+    <rect x="0" y="0" width="900" height="130" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+    <text x="450" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Output Metrics
+    </text>
+    
+    <!-- Metrics boxes -->
+    <g transform="translate(30, 45)">
+      <rect x="0" y="0" width="130" height="65" rx="5" fill="#ff6b6b"/>
+      <text x="65" y="25" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle">TP</text>
+      <text x="65" y="45" fill="#000" font-family="Arial, sans-serif" font-size="9" text-anchor="middle">True Positives</text>
+      <text x="65" y="58" fill="#000" font-family="Arial, sans-serif" font-size="8" text-anchor="middle">(r * nt).round()</text>
+    </g>
+    
+    <g transform="translate(180, 45)">
+      <rect x="0" y="0" width="130" height="65" rx="5" fill="#ffd93d"/>
+      <text x="65" y="25" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle">FP</text>
+      <text x="65" y="45" fill="#000" font-family="Arial, sans-serif" font-size="9" text-anchor="middle">False Positives</text>
+      <text x="65" y="58" fill="#000" font-family="Arial, sans-serif" font-size="8" text-anchor="middle">(tp/(p+eps) - tp)</text>
+    </g>
+    
+    <g transform="translate(330, 45)">
+      <rect x="0" y="0" width="130" height="65" rx="5" fill="#4ecdc4"/>
+      <text x="65" y="25" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle">Precision</text>
+      <text x="65" y="45" fill="#000" font-family="Arial, sans-serif" font-size="9" text-anchor="middle">Mean Precision</text>
+      <text x="65" y="58" fill="#000" font-family="Arial, sans-serif" font-size="8" text-anchor="middle">p.mean()</text>
+    </g>
+    
+    <g transform="translate(480, 45)">
+      <rect x="0" y="0" width="130" height="65" rx="5" fill="#4ecdc4"/>
+      <text x="65" y="25" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle">Recall</text>
+      <text x="65" y="45" fill="#000" font-family="Arial, sans-serif" font-size="9" text-anchor="middle">Mean Recall</text>
+      <text x="65" y="58" fill="#000" font-family="Arial, sans-serif" font-size="8" text-anchor="middle">r.mean()</text>
+    </g>
+    
+    <g transform="translate(630, 45)">
+      <rect x="0" y="0" width="110" height="65" rx="5" fill="#ff6b6b"/>
+      <text x="55" y="25" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle">mAP50</text>
+      <text x="55" y="45" fill="#000" font-family="Arial, sans-serif" font-size="9" text-anchor="middle">IoU=0.5</text>
+      <text x="55" y="58" fill="#000" font-family="Arial, sans-serif" font-size="8" text-anchor="middle">ap[:, 0].mean()</text>
+    </g>
+    
+    <g transform="translate(760, 45)">
+      <rect x="0" y="0" width="110" height="65" rx="5" fill="#ffd93d"/>
+      <text x="55" y="25" fill="#000" font-family="Consolas, monospace" font-size="11" text-anchor="middle">mAP</text>
+      <text x="55" y="45" fill="#000" font-family="Arial, sans-serif" font-size="9" text-anchor="middle">IoU=.5:.95</text>
+      <text x="55" y="58" fill="#000" font-family="Arial, sans-serif" font-size="8" text-anchor="middle">ap.mean()</text>
+    </g>
+  </g>
+</svg>
+

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450">
+  <defs>
+    <linearGradient id="bgMeter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="450" fill="url(#bgMeter)"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#fff" font-family="Georgia, serif" font-size="24" text-anchor="middle" font-weight="bold">
+    AverageMeter - Running Average Tracker
+  </text>
+  
+  <!-- Concept Visualization -->
+  <g transform="translate(50, 70)">
+    <rect x="0" y="0" width="400" height="180" rx="10" fill="#252547" stroke="#4ecdc4" stroke-width="2"/>
+    <text x="200" y="25" fill="#4ecdc4" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      How It Works
+    </text>
+    
+    <!-- Formula -->
+    <rect x="20" y="45" width="360" height="50" rx="8" fill="#1a1a2e"/>
+    <text x="200" y="75" fill="#fff" font-family="Georgia, serif" font-size="16" text-anchor="middle">
+      avg = sum / num
+    </text>
+    
+    <!-- Update equation -->
+    <text x="20" y="120" fill="#ccc" font-family="Consolas, monospace" font-size="12">
+      update(v, n):
+    </text>
+    <text x="40" y="140" fill="#ccc" font-family="Consolas, monospace" font-size="11">
+      sum += v * n  # weighted sum
+    </text>
+    <text x="40" y="158" fill="#ccc" font-family="Consolas, monospace" font-size="11">
+      num += n      # total count
+    </text>
+    <text x="40" y="176" fill="#4ecdc4" font-family="Consolas, monospace" font-size="11">
+      avg = sum / num
+    </text>
+  </g>
+  
+  <!-- Example Timeline -->
+  <g transform="translate(480, 70)">
+    <rect x="0" y="0" width="380" height="180" rx="10" fill="#252547" stroke="#ffd93d" stroke-width="2"/>
+    <text x="190" y="25" fill="#ffd93d" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Example: Loss Tracking
+    </text>
+    
+    <!-- Table -->
+    <g transform="translate(20, 45)">
+      <!-- Header -->
+      <rect x="0" y="0" width="340" height="25" fill="#1a1a2e" rx="3"/>
+      <text x="50" y="17" fill="#4ecdc4" font-family="Consolas, monospace" font-size="10" text-anchor="middle">Batch</text>
+      <text x="120" y="17" fill="#4ecdc4" font-family="Consolas, monospace" font-size="10" text-anchor="middle">Loss</text>
+      <text x="190" y="17" fill="#4ecdc4" font-family="Consolas, monospace" font-size="10" text-anchor="middle">n</text>
+      <text x="260" y="17" fill="#4ecdc4" font-family="Consolas, monospace" font-size="10" text-anchor="middle">sum</text>
+      <text x="320" y="17" fill="#ffd93d" font-family="Consolas, monospace" font-size="10" text-anchor="middle">avg</text>
+      
+      <!-- Row 1 -->
+      <text x="50" y="42" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">1</text>
+      <text x="120" y="42" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">2.5</text>
+      <text x="190" y="42" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">32</text>
+      <text x="260" y="42" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">80</text>
+      <text x="320" y="42" fill="#ffd93d" font-family="Consolas, monospace" font-size="10" text-anchor="middle">2.50</text>
+      
+      <!-- Row 2 -->
+      <text x="50" y="62" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">2</text>
+      <text x="120" y="62" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">2.0</text>
+      <text x="190" y="62" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">32</text>
+      <text x="260" y="62" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">144</text>
+      <text x="320" y="62" fill="#ffd93d" font-family="Consolas, monospace" font-size="10" text-anchor="middle">2.25</text>
+      
+      <!-- Row 3 -->
+      <text x="50" y="82" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">3</text>
+      <text x="120" y="82" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">1.8</text>
+      <text x="190" y="82" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">32</text>
+      <text x="260" y="82" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">201.6</text>
+      <text x="320" y="82" fill="#ffd93d" font-family="Consolas, monospace" font-size="10" text-anchor="middle">2.10</text>
+      
+      <!-- Row 4 -->
+      <text x="50" y="102" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">...</text>
+      <text x="120" y="102" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">...</text>
+      <text x="190" y="102" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">...</text>
+      <text x="260" y="102" fill="#ccc" font-family="Consolas, monospace" font-size="10" text-anchor="middle">...</text>
+      <text x="320" y="102" fill="#ffd93d" font-family="Consolas, monospace" font-size="10" text-anchor="middle">...</text>
+    </g>
+    
+    <text x="190" y="170" fill="#888" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">
+      Weighted by batch size for accurate epoch average
+    </text>
+  </g>
+  
+  <!-- Use Cases -->
+  <g transform="translate(50, 280)">
+    <rect x="0" y="0" width="810" height="150" rx="10" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+    <text x="405" y="25" fill="#fff" font-family="Consolas, monospace" font-size="14" text-anchor="middle" font-weight="bold">
+      Common Use Cases
+    </text>
+    
+    <!-- Loss tracking -->
+    <g transform="translate(30, 45)">
+      <rect x="0" y="0" width="230" height="90" rx="8" fill="#252547" stroke="#ff6b6b" stroke-width="1"/>
+      <text x="115" y="22" fill="#ff6b6b" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+        Loss Tracking
+      </text>
+      <text x="15" y="45" fill="#ccc" font-family="Consolas, monospace" font-size="10">loss_meter = AverageMeter()</text>
+      <text x="15" y="65" fill="#ccc" font-family="Consolas, monospace" font-size="10">loss_meter.update(loss, batch)</text>
+      <text x="15" y="85" fill="#888" font-family="Consolas, monospace" font-size="9">print(f"Avg: {loss_meter.avg}")</text>
+    </g>
+    
+    <!-- Timing -->
+    <g transform="translate(290, 45)">
+      <rect x="0" y="0" width="230" height="90" rx="8" fill="#252547" stroke="#4ecdc4" stroke-width="1"/>
+      <text x="115" y="22" fill="#4ecdc4" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+        Batch Timing
+      </text>
+      <text x="15" y="45" fill="#ccc" font-family="Consolas, monospace" font-size="10">time_meter = AverageMeter()</text>
+      <text x="15" y="65" fill="#ccc" font-family="Consolas, monospace" font-size="10">time_meter.update(elapsed, 1)</text>
+      <text x="15" y="85" fill="#888" font-family="Consolas, monospace" font-size="9">print(f"ms/batch: {avg*1000}")</text>
+    </g>
+    
+    <!-- Metrics -->
+    <g transform="translate(550, 45)">
+      <rect x="0" y="0" width="230" height="90" rx="8" fill="#252547" stroke="#ffd93d" stroke-width="1"/>
+      <text x="115" y="22" fill="#ffd93d" font-family="Consolas, monospace" font-size="12" text-anchor="middle" font-weight="bold">
+        Accuracy Metrics
+      </text>
+      <text x="15" y="45" fill="#ccc" font-family="Consolas, monospace" font-size="10">acc_meter = AverageMeter()</text>
+      <text x="15" y="65" fill="#ccc" font-family="Consolas, monospace" font-size="10">acc_meter.update(accuracy, n)</text>
+      <text x="15" y="85" fill="#888" font-family="Consolas, monospace" font-size="9">print(f"Epoch acc: {avg:.2%}")</text>
+    </g>
+  </g>
+</svg>
+
